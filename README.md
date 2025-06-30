@@ -1,6 +1,6 @@
 # Harry Yu's Blog
 
-A modern, fast, and responsive blog website built with Next.js, TypeScript, and Tailwind CSS. Thanks to Josh Comeau for his inspirations! 
+A modern, fast, and responsive blog website built with Next.js, TypeScript, and Tailwind CSS. Thanks to Josh Comeau for his inspirations!
 
 
 ## Stuff used
