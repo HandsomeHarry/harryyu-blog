@@ -69,14 +69,14 @@ export default function AboutPage() {
                 <ul className="text-gray-700 space-y-1 text-sm">
                   <li>Java & Python (learned Python in a weekend hyperfocus)</li>
                   <li>Docker (containers are contained chaos)</li>
-                  <li>Bash Scripting (automation >> repetitive tasks)</li>
+                  <li>Bash Scripting (automation better than repetitive tasks)</li>
                   <li>Product Design (UI/UX rabbit holes are dangerous)</li>
                 </ul>
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">Creative & Physical</h3>
                 <ul className="text-gray-700 space-y-1 text-sm">
-                  <li>3D Modeling (binging blenderguru videos)</li>
+                  <li>3D Modeling (bingeing blenderguru videos)</li>
                   <li>Video Production (learned editing for DIY Perks, kept going)</li>
                   <li>3D Printing (satisfying instant gratification)</li>
                   <li>PC Building (like expensive LEGOs for nerds)</li>
