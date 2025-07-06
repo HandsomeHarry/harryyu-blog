@@ -32,6 +32,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 3. Static generation via generateStaticParams
 4. Syntax highlighting with rehype-highlight
 5. Auto-generated reading time and anchor links
+6. Vercel Analytics and Speed Insights integration
 
 **Styling System:**
 - Tailwind CSS with custom typography plugin
@@ -53,9 +54,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `/public/files/` - Downloadable assets (STL files, etc.)
 
 **Layout & Components:**
-- `/src/app/layout.tsx` - Root layout with Header/Footer
+- `/src/app/layout.tsx` - Root layout with Header/Footer and analytics
 - `/src/components/Header.tsx` - Navigation with responsive design
 - `/src/components/Footer.tsx` - Social links and site info
+
+**MDX Configuration:**
+- Custom MDX components with Tailwind styling in `/src/app/blog/[slug]/page.tsx`
+- Remark plugins: remarkGfm for GitHub Flavored Markdown
+- Rehype plugins: rehypeSlug, rehypeAutolinkHeadings, rehypeHighlight
 
 ## Development Patterns
 
