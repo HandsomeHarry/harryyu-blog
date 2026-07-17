@@ -1,4 +1,6 @@
 "use client";
+// Adapted from "Cosmic Voyage" by Abhishek Badar — https://github.com/AbhishekBadar/portfolio
+// Concept, design, and 3D/shader architecture are his; content is my own.
 
 import Lenis from "lenis";
 import { useEffect, useState } from "react";

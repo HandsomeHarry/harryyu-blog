@@ -1,3 +1,6 @@
+// Adapted from "Cosmic Voyage" by Abhishek Badar — https://github.com/AbhishekBadar/portfolio
+// Concept, design, and 3D/shader architecture are his; content is my own.
+
 import * as THREE from "three";
 
 /**
