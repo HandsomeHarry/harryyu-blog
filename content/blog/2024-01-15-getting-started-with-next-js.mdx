@@ -1,0 +1,116 @@
+---
+title: "Getting Started with Next.js: A Developer's Journey"
+description: "My experience learning Next.js and why it's become my go-to framework for React applications. From setup to deployment, here's what I've learned."
+date: "2024-01-15"
+author: "Harry Yu"
+tags: ["Next.js", "React", "Web Development", "Frontend"]
+---
+
+# Getting Started with Next.js: A Developer's Journey
+
+When I first heard about Next.js, I was skeptical. "Another React framework?" I thought. "Do we really need this?" But after spending months working with it, I can confidently say that Next.js has transformed how I approach web development.
+
+## Why Next.js?
+
+Next.js solves many problems that developers face when building React applications:
+
+- **Server-Side Rendering (SSR)** - Better SEO and initial page load performance
+- **Static Site Generation (SSG)** - Lightning-fast websites with pre-built pages
+- **API Routes** - Build your backend and frontend in the same project
+- **Automatic Code Splitting** - Only load the JavaScript you need
+- **Built-in CSS Support** - Works with CSS Modules, Sass, and CSS-in-JS out of the box
+
+## My First Project
+
+My first real Next.js project was rebuilding my personal portfolio. I wanted something that would:
+
+1. Load quickly
+2. Look great on all devices
+3. Be easy to maintain
+4. Showcase my work effectively
+
+Here's a simple example of how I structured my project:
+
+```javascript
+// pages/index.js
+import Head from 'next/head'
+import Layout from '../components/Layout'
+
+export default function Home({ posts }) {
+  return (
+    <Layout>
+      <Head>
+        <title>Harry Yu - Software Developer</title>
+        <meta name="description" content="Personal portfolio and blog" />
+      </Head>
+      <main>
+        <h1>Welcome to my blog!</h1>
+        {posts.map(post => (
+          <article key={post.id}>
+            <h2>{post.title}</h2>
+            <p>{post.excerpt}</p>
+          </article>
+        ))}
+      </main>
+    </Layout>
+  )
+}
+```
+
+## Key Features I Love
+
+### 1. File-based Routing
+
+No need to configure complex routing. Just create a file in the `pages` directory, and Next.js handles the rest.
+
+### 2. API Routes
+
+Building a contact form? Just create an API route:
+
+```javascript
+// pages/api/contact.js
+export default function handler(req, res) {
+  if (req.method === 'POST') {
+    // Handle form submission
+    res.status(200).json({ message: 'Success!' })
+  }
+}
+```
+
+### 3. Image Optimization
+
+The `next/image` component automatically optimizes images for different screen sizes and formats.
+
+## Performance Benefits
+
+The performance improvements I saw were immediate:
+
+- **Faster initial page loads** thanks to SSR
+- **Better Core Web Vitals** scores
+- **Improved SEO** with server-rendered content
+- **Smaller bundle sizes** with automatic code splitting
+
+## Challenges I Faced
+
+Not everything was smooth sailing. Here are some challenges I encountered:
+
+1. **Learning curve** - Understanding when to use SSR vs SSG vs client-side rendering
+2. **Deployment complexity** - Setting up proper hosting for server-side features
+3. **Debugging** - Server-side errors can be trickier to debug
+
+## Tips for Beginners
+
+If you're just starting with Next.js, here are my recommendations:
+
+- Start with the official tutorial
+- Use `create-next-app` for your first project
+- Focus on understanding the different rendering methods
+- Don't try to use every feature at once
+
+## Conclusion
+
+Next.js has become an essential tool in my development toolkit. It strikes the perfect balance between developer experience and performance. Whether you're building a simple blog or a complex web application, Next.js provides the tools you need to succeed.
+
+The ecosystem is mature, the documentation is excellent, and the community is incredibly helpful. If you're working with React and haven't tried Next.js yet, I highly recommend giving it a shot.
+
+What's your experience with Next.js? Have you faced similar challenges, or discovered features that I missed? I'd love to hear your thoughts!

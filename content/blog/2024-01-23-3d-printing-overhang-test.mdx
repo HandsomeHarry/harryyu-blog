@@ -1,0 +1,30 @@
+---
+title: "3D Printing Overhang Test"
+description: "Testing the limits of 3D printing overhangs with a Prusa Mini and analyzing print quality at different angles."
+date: "2024-01-23"
+author: "Harry Yu"
+tags: ["3D Printing", "Testing", "Prusa Mini", "Print Quality"]
+---
+
+# 3D Printing Overhang Test
+
+## Why did I do this?
+
+Having taken the new ENGR-11 course at my university, I got the mission of making a 3D print and showing it in this writeup. So I started looking for an overhang test, and after a bit of roaming on Thingiverse, I found [this overhang test model](https://www.thingiverse.com/thing:2972495), and here is the final print after 1h02m of printing with PLA on a Prusa Mini, with 60°C bed temperature and 215°C nozzle temp:
+
+## Results
+
+### Top View
+[![Top View](/images/blog/3d-print-1/top-view.jpg.webp)](/images/blog/3d-print-1/top-view.jpg.webp)
+
+### Side View
+And here's a side view of the print:
+[![Side View](/images/blog/3d-print-1/side.jpg.webp)](/images/blog/3d-print-1/side.jpg.webp)
+
+### Underside Analysis
+This is the underside, you can see the drooping gets worse as the angle went up. Gets more obvious at 60 degrees.
+[![Underside View](/images/blog/3d-print-1/underside.jpg.webp)](/images/blog/3d-print-1/underside.jpg.webp)
+
+## What I learned
+
+This overhang test demonstrates the practical limits of FDM 3D printing without supports. The Prusa Mini handled angles up to about 45° quite well, but quality degraded significantly beyond that point. This knowledge is crucial for designing parts that can be printed successfully without requiring extensive support structures.

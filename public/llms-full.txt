@@ -1,0 +1,97 @@
+# Harry Yu — Software Engineer
+
+> Software engineer and Brandeis CS graduate working across systems, machine learning, game development, and interactive 3D. From real-time 3D pose-estimation research at Peking University to Dockerized monitoring stacks, Godot games, and patented hardware design.
+
+- Name: Harry Yu (Shiyi Yu)
+- Role: Software Engineer
+- Location: Waltham, MA, USA
+- Email: harryyu2002@gmail.com
+- Website: https://harryyu.dev
+- GitHub: https://github.com/HandsomeHarry
+
+## About
+
+I'm a software engineer working across systems, machine learning, and interactive 3D. From real-time 3D pose-estimation research at Peking University to Dockerized monitoring stacks at REON and a Godot empathy game, I like building things that hold up under real use — tools, hardware, and experiences included.
+
+I build across the full spectrum — backend systems and data pipelines, ML research, game development, and hardware. I turn ambiguous problems into shipped, dependable things.
+
+At Peking University's HOME Lab I worked on real-time 3D human pose estimation, building validation methods that surfaced joint instabilities visual inspection missed. At REON I owned a data-validation layer and a Dockerized monitoring stack that stabilized nightly experiment runs.
+
+Outside of work I model in Blender, build games in Godot, run a localization channel with 1M+ followers, and hold a design patent for an all-in-one keyboard computer. I care about accessibility, craft, and making complexity feel simple.
+
+## Experience
+
+### Research Assistant, Real-Time 3D Human Pose Estimation — Peking University HOME Lab
+Jun 2025 — Dec 2025 · Beijing, China
+
+Contributed to sparse-sensor-based 3D motion reconstruction research for real-time pose estimation.
+
+- Implemented calibration procedures and keypoint integration for real-time pose-estimation pipelines
+- Developed validation methods tracing intermediate results — monitoring joint stability, temporal consistency, and latency
+- Identified reconstruction instabilities that surface-level visual inspection missed
+- Tested hypotheses around calibration accuracy, confidence thresholding, and temporal smoothing
+- Connected technical decisions to downstream HCI applications for natural virtual character interaction
+
+### Software Engineer Intern — REON Technology Inc.
+Jun 2023 — Jan 2024 · Chelmsford, MA, USA
+
+Built the data-validation layer and observability stack behind BMS battery experiment analysis.
+
+- Designed a lightweight data-validation layer (schema checks, timestamp alignment, unit normalization) shifting analysis from manual clean-up to first-pass trustable datasets
+- Orchestrated Dockerized services for the monitoring stack with observability hooks (structured logs, health probes) — stabilizing nightly runs and enabling one-command deployments
+- Built decision-ready Jupyter dashboards translating raw cycles into SoC/SoH and event views for weekly stakeholder reviews
+- Sped up reviews, reduced re-runs, and helped stakeholders triage anomalies earlier
+
+### Channel Operator, Translator & Proofreader — DIY Perks (Authorized Bilibili Channel)
+Nov 2020 — Present · Online
+
+Led a 7-member team localizing creator content across Chinese platforms — 160+ videos, 250M+ views, 1M+ followers.
+
+- Led a 7-member team localizing and publishing content across Bilibili / Tencent / Baidu / Xigua, standardizing translation and QA workflows
+- Shipped 160+ translated/proofread videos with 250M cumulative views; grew to 1M+ followers within the first month
+- Negotiated 6 brand partnerships (Royole, Flexispot, Influcity) generating $25,000+ in sponsorship revenue
+- Built Python + Excel automation for payouts and tax tracking — cut monthly accounting from 8 hours to 1 hour
+
+### Teaching Assistant, COSI 150A: Compiler Design — Brandeis University
+Jan 2024 — May 2024 · Waltham, MA, USA
+
+- Held weekly office hours assisting 20+ students with lexical analysis, parsing, code generation, and optimization
+- Graded exams and assignments with detailed feedback reinforcing compiler theory and implementation
+- Collaborated with the professor to prepare lecture materials, problem sets, and exam questions
+
+## Projects
+
+### Companion Cube (2025 · ML · Privacy-first)
+Focus detection that stays on-device. ADHD productivity app with on-device focus-state classification (76.8% accuracy on distraction patterns) and a privacy-first SQLite architecture — no user data ever leaves the machine. Built with: Python, Machine Learning, SQLite, Tauri.
+
+### ADHD Simulator (2025 · Godot · Game)
+Turning symptoms into experiential mechanics. Godot game that translates ADHD symptoms into mechanics — magnetic cursor attraction, reading minigames, time distortion. Blender-modeled environments, behavior-tree boss AI, 3+ hours of content, 500+ downloads in week one. Built with: Godot, GDScript, Blender, VFX.
+
+### Real-Time 3D Pose Estimation (2025 · Research · Peking University)
+Sparse-sensor motion reconstruction. Research on real-time 3D human pose estimation from sparse sensors — calibration procedures, keypoint integration, and validation methods tracing joint stability, temporal consistency, and latency. Built with: Research, 3D, Pose Estimation, Python.
+
+### All-in-One Keyboard (2021 · Design Patent · CN306847318S)
+A full PC under your fingertips. Patented all-in-one computer design embedding a laptop motherboard beneath an ergonomic mechanical keyboard — reducing desk footprint while maintaining full typing comfort. Built with: Hardware, Design Patent, CAD.
+
+### Farm Traceability Cam (2023 · DeisHacks · Best Marketing)
+Time-lapse crops → scannable QR produce. DeisHacks 2023 Best Marketing winner (team of 2): a repurposed-laptop-camera system filming crop growth and linking time-lapse videos to scannable QR codes for local farm produce traceability. Built with: Python, QR, Hardware, Hackathon.
+
+### DIY Perks Localization (2020–Present · Media · 1M+ followers)
+160+ videos · 250M views · 1M+ followers. Led a 7-member team localizing creator content across Bilibili / Tencent / Baidu / Xigua. Built Python + Excel automation for payouts and tax tracking (8h → 1h/month). Built with: Localization, Python, Automation, Ops.
+
+## Skills
+
+- **Programming:** Python · Java · Rust · TypeScript · GDScript
+- **Data & ML:** Jupyter · Statistics · Data Validation
+- **Systems & Infra:** Docker · Bash · Observability · Tauri
+- **3D & Visualization:** Blender · Godot · 3D Printing
+- **Game Dev & DIY:** Behavior-Tree AI · VFX · PC Building
+- **Languages:** Mandarin (Native) · English (Fluent)
+
+## Education & Credentials
+
+- B.S. Computer Science, Minor Economics — Brandeis University (2021–2025); Dean's List (Fall 2023, Spring 2025)
+- Research Assistant — Peking University HOME Lab (2025)
+- Design Patent — CN306847318S (2021), all-in-one keyboard computer
+- DeisHacks 2023 Best Marketing Award; HiMCM 2019 Honorable Mention (Top 25%)
+- Location: Waltham, MA, USA

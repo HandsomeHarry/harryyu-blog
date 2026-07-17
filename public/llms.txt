@@ -1,0 +1,31 @@
+# Harry Yu
+
+> Software engineer and Brandeis CS graduate working across systems, machine learning, game development, and interactive 3D. From real-time 3D pose-estimation research at Peking University to Dockerized monitoring stacks, Godot games, and patented hardware design.
+
+Harry builds across the full spectrum — backend systems and data pipelines, ML research, game development, and hardware — with a focus on turning ambiguous problems into shipped, dependable things. The portfolio at harryyu.dev is an interactive 3D (WebGL) experience; the complete text content is mirrored in the files linked below for language models.
+
+## Key pages
+- [Portfolio home](https://harryyu.dev/): Interactive 3D portfolio with about, experience, projects, and skills.
+- [Full profile (Markdown)](https://harryyu.dev/llms-full.txt): Complete bio, work experience, and every project description in plain text.
+- [Résumé (PDF)](https://harryyu.dev/Resume_HarryYu.pdf): Downloadable résumé.
+
+## Experience
+- Research Assistant, Peking University HOME Lab (Jun 2025–Dec 2025): Real-time 3D human pose estimation from sparse sensors; calibration, keypoint integration, and validation methods tracing joint stability and latency.
+- Software Engineer Intern, REON Technology Inc. (Jun 2023–Jan 2024): Data-validation layer and Dockerized monitoring stack for BMS battery experiments; decision-ready Jupyter dashboards.
+- Channel Operator, DIY Perks authorized Bilibili channel (Nov 2020–Present): Led a 7-member localization team; 160+ videos, 250M views, 1M+ followers; Python+Excel payout automation.
+- Teaching Assistant, Brandeis COSI 150A Compiler Design (Jan 2024–May 2024).
+
+## Selected projects
+- Companion Cube: On-device ADHD focus-state classifier (76.8% accuracy) with privacy-first SQLite architecture.
+- ADHD Simulator: Godot empathy game translating symptoms into mechanics; Blender environments, behavior-tree AI, 500+ downloads in week one.
+- Real-Time 3D Pose Estimation: Sparse-sensor motion reconstruction research at Peking University.
+- All-in-One Keyboard: Design Patent CN306847318S — a laptop-motherboard computer beneath an ergonomic mechanical keyboard.
+- Farm Traceability Cam: DeisHacks 2023 Best Marketing — crop time-lapse videos linked to scannable QR codes.
+
+## Profiles
+- [GitHub](https://github.com/HandsomeHarry)
+- [Website](https://harryyu.dev)
+
+## Contact
+- Email: harryyu2002@gmail.com
+- Location: Waltham, MA, USA
