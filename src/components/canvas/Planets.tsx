@@ -3,9 +3,10 @@
 // Concept, design, and 3D/shader architecture are his; content is my own.
 
 import { useMemo, useRef } from "react";
+import * as THREE from "three";
+import { useI18n } from "@/lib/i18n";
 import { useFrame } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
-import * as THREE from "three";
 import {
   ABOUT_PLANET,
   CONTACT_SUN,
@@ -393,6 +394,7 @@ function BillboardLabel({
 /* ------------------------------------------------------------------ */
 
 function AboutPlanet() {
+  const { t } = useI18n();
   const planetRef = useRef<THREE.Mesh>(null);
   const cloudsRef = useRef<THREE.Mesh>(null);
   const beltRef = useRef<THREE.Points>(null);
@@ -494,7 +496,7 @@ function AboutPlanet() {
         </group>
       </group>
       <BillboardLabel
-        text="ABOUT ME"
+        text={t.ui.billboards.about}
         fontSize={200}
         width={11}
         position={ABOUT_LABEL_POS}
@@ -509,6 +511,7 @@ function AboutPlanet() {
 /* ------------------------------------------------------------------ */
 
 function ProjectsPlanet() {
+  const { t } = useI18n();
   const planetRef = useRef<THREE.Mesh>(null);
 
   const neptuneMap = useTexture("/textures/2k_neptune.webp", prepAlbedo);
@@ -581,7 +584,7 @@ function ProjectsPlanet() {
         </group>
       </group>
       <BillboardLabel
-        text="PROJECTS"
+        text={t.ui.billboards.projects}
         fontSize={200}
         width={9}
         position={PROJECTS_LABEL_POS}
@@ -596,6 +599,7 @@ function ProjectsPlanet() {
 /* ------------------------------------------------------------------ */
 
 function ContactSun() {
+  const { t } = useI18n();
   const sunTex = useTexture("/textures/4k_sun.webp", prepAlbedo);
 
   const sunMat = useMemo(
@@ -694,7 +698,7 @@ function ContactSun() {
       </group>
       <primitive object={connector.line} />
       <BillboardLabel
-        text="CONTACT"
+        text={t.ui.billboards.contact}
         fontSize={140}
         width={7}
         position={CONTACT_LABEL_POS}

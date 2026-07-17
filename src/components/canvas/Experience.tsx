@@ -12,6 +12,7 @@ import {
 } from "@react-three/postprocessing";
 import type { BloomEffect, ChromaticAberrationEffect } from "postprocessing";
 import { Suspense, useEffect, useRef } from "react";
+import { useIsMobile } from "@/lib/useMediaQuery";
 import * as THREE from "three";
 import { scrollState } from "@/lib/scroll";
 import { useUIStore } from "@/lib/store";
@@ -149,15 +150,19 @@ function ImpactPostSurge({
   });
   return null;
 }
-
 export default function Experience() {
   const bloomRef = useRef<BloomEffect | null>(null);
   const chromaRef = useRef<ChromaticAberrationEffect | null>(null);
+  // Phones: cap pixel ratio and drop MSAA (the EffectComposer owns AA via
+  // multisampling) to keep the scene smooth on mid/low mobile GPUs.
+  const mobile = useIsMobile();
+  const dpr: [number, number] = mobile ? [1, 1.5] : [1, 1.75];
+  const multisampling = mobile ? 0 : 4;
 
   return (
     <div className="fixed inset-0 z-0" aria-hidden>
       <Canvas
-        dpr={[1, 1.75]}
+        dpr={dpr}
         gl={{
           // The EffectComposer renders via its own targets — canvas MSAA
           // would only burn memory without touching the composed output
@@ -202,8 +207,7 @@ export default function Experience() {
           <SkillCards />
           <ProjectOrbit />
           <SunImpact />
-
-          <EffectComposer multisampling={4}>
+          <EffectComposer multisampling={multisampling}>
             <Bloom
               ref={bloomRef}
               intensity={0.95}

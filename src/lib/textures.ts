@@ -23,8 +23,8 @@ function toTexture(canvas: HTMLCanvasElement): THREE.CanvasTexture {
   return tex;
 }
 
-const DISPLAY_FONT = "'Space Grotesk', 'Arial', sans-serif";
-const MONO_FONT = "'JetBrains Mono', 'Menlo', monospace";
+const DISPLAY_FONT = "'Space Grotesk', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif";
+const MONO_FONT = "'JetBrains Mono', 'PingFang SC', 'Microsoft YaHei', monospace";
 
 /* ------------------------------------------------------------------ */
 

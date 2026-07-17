@@ -1,7 +1,8 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import { LanguageProvider } from "@/lib/i18n";
 import { TOTAL_PAGES } from "@/lib/journey";
 import { initSmoothScroll } from "@/lib/scroll";
 import Loader from "@/components/dom/Loader";
@@ -32,23 +33,25 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative">
-      {/* Scroll runway — the journey lives in this scroll distance */}
-      <div style={{ height: `${TOTAL_PAGES * 100}vh` }} />
+    <LanguageProvider>
+      <main className="relative">
+        {/* Scroll runway — the journey lives in this scroll distance */}
+        <div style={{ height: `${TOTAL_PAGES * 100}vh` }} />
 
-      {/* 3D scene (fixed, behind everything) */}
-      {fontsReady && <Experience />}
+        {/* 3D scene (fixed, behind everything) */}
+        {fontsReady && <Experience />}
 
-      {/* DOM overlay */}
-      <Navbar />
-      <HeroOverlay />
-      <SectionOverlays />
-      <HUDRail />
-      <SocialRail />
-      <ProjectModal />
-      <ImpactFlash />
-      <CustomCursor />
-      <Loader />
-    </main>
+        {/* DOM overlay */}
+        <Navbar />
+        <HeroOverlay />
+        <SectionOverlays />
+        <HUDRail />
+        <SocialRail />
+        <ProjectModal />
+        <ImpactFlash />
+        <CustomCursor />
+        <Loader />
+      </main>
+    </LanguageProvider>
   );
 }

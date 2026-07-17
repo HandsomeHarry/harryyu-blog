@@ -4,7 +4,8 @@ import { Float } from "@react-three/drei";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { SKILLS, type Skill } from "@/lib/data";
+import { type Skill } from "@/lib/data";
+import { useI18n } from "@/lib/i18n";
 import { scrollState } from "@/lib/scroll";
 import { makeGlowTexture, makeSkillCardTexture } from "@/lib/textures";
 
@@ -200,6 +201,8 @@ function Card({ skill, position, side, plane, glowTex }: CardProps) {
 /* ------------------------------------------------------------------ */
 
 export default function SkillCards() {
+  const { t } = useI18n();
+  const skills = t.skills;
   const shared = useMemo(() => {
     return {
       plane: new THREE.PlaneGeometry(1, 1),
@@ -216,7 +219,7 @@ export default function SkillCards() {
 
   return (
     <group>
-      {SKILLS.map((skill, i) => {
+      {skills.map((skill, i) => {
         const slot = LAYOUT[i % LAYOUT.length];
         return (
           <Card

@@ -3,13 +3,21 @@
 import { useRef } from "react";
 import { SECTIONS, sectionAt, type SectionId } from "@/lib/journey";
 import { scrollToSection, useCurrentSection, useScrollRaf } from "@/lib/scroll";
+import { useI18n } from "@/lib/i18n";
 
-const LABELS = Object.fromEntries(
-  SECTIONS.map((s) => [s.id, s.label])
-) as Record<SectionId, string>;
+const SECTION_KEYS: Record<SectionId, "home" | "launch" | "about" | "work" | "skills" | "projects" | "contact"> = {
+  hero: "home",
+  launch: "launch",
+  about: "about",
+  experience: "work",
+  skills: "skills",
+  projects: "projects",
+  contact: "contact",
+};
 
 export default function HUDRail() {
   const current = useCurrentSection();
+  const { t } = useI18n();
 
   const fillRef = useRef<HTMLDivElement>(null);
   const altRef = useRef<HTMLSpanElement>(null);
@@ -45,7 +53,8 @@ export default function HUDRail() {
       velRef.current.textContent = vel;
     }
 
-    const sec = `SEC // ${LABELS[sectionAt(p)].toUpperCase()}`;
+    const secId = sectionAt(p);
+    const sec = `${t.ui.hud.secLabel} // ${t.ui.nav[SECTION_KEYS[secId]].toUpperCase()}`;
     if (sec !== c.sec && secRef.current) {
       c.sec = sec;
       secRef.current.textContent = sec;
@@ -66,12 +75,13 @@ export default function HUDRail() {
         {/* section ticks */}
         {SECTIONS.map((s) => {
           const active = current === s.id;
+          const label = t.ui.nav[SECTION_KEYS[s.id]];
           return (
             <button
               key={s.id}
               type="button"
               data-cursor="hover"
-              aria-label={`Go to ${s.label}`}
+              aria-label={label}
               onClick={() => scrollToSection(s.id)}
               className="group pointer-events-auto absolute left-1/2 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
               style={{ top: `${s.range[0] * 100}%` }}
@@ -84,7 +94,7 @@ export default function HUDRail() {
                 }`}
               />
               <span className="pointer-events-none absolute right-full top-1/2 mr-3 -translate-y-1/2 whitespace-nowrap font-mono text-[10px] uppercase tracking-[0.25em] text-hud opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-                {s.label}
+                {label}
               </span>
             </button>
           );

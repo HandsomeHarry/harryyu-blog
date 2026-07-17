@@ -3,9 +3,9 @@
 import { useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ARCHIVE_URL, EXPERIENCE, PROFILE, PROJECTS } from "@/lib/data";
 import { useScrollRaf } from "@/lib/scroll";
 import { useUIStore } from "@/lib/store";
+import { useI18n } from "@/lib/i18n";
 
 /* ------------------------------------------------------------------ */
 /* Scroll envelope helpers                                             */
@@ -34,17 +34,18 @@ function applyPanel(
   transform: (a: number) => string
 ) {
   if (!el) return;
-  if (Math.abs(alpha - last.current) < 0.0008) return;
+  if (alpha === last.current) return;
   last.current = alpha;
   el.style.opacity = alpha.toFixed(4);
   el.style.transform = transform(alpha);
-  el.style.visibility = alpha < 0.02 ? "hidden" : "visible";
+  el.style.visibility = alpha <= 0 ? "hidden" : "visible";
+  el.style.pointerEvents = alpha > 0.5 ? "auto" : "none";
 }
 
 const HIDDEN: CSSProperties = {
   opacity: 0,
   visibility: "hidden",
-  willChange: "opacity, transform",
+  pointerEvents: "none",
 };
 
 /* ------------------------------------------------------------------ */
@@ -53,18 +54,24 @@ const HIDDEN: CSSProperties = {
 
 function Kicker({ children }: { children: ReactNode }) {
   return (
-    <p className="font-mono text-xs tracking-hud text-hud uppercase">
+    <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-cyan">
       {children}
-    </p>
+    </span>
   );
 }
 
-const CONTACT_COPY =
-  "I'm currently open to new opportunities — full-time, contract, or just a good chat. Whether you have a project idea, a question, or you just want to say hi, my inbox is the best way to reach me.";
+/** Shared glass-panel style used by About / Work / Contact panels. */
+const PANEL_STYLE: CSSProperties = {
+  background: "linear-gradient(150deg, rgba(14,20,42,0.94), rgba(6,8,20,0.94))",
+  boxShadow:
+    "0 0 40px rgba(5,8,20,0.7), 0 0 24px rgba(76,201,240,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
+  backdropFilter: "blur(18px)",
+};
 
 /* ------------------------------------------------------------------ */
 
 export default function SectionOverlays() {
+  const { t } = useI18n();
   const aboutRef = useRef<HTMLDivElement>(null);
   const experienceRef = useRef<HTMLDivElement>(null);
   const skillsRef = useRef<HTMLDivElement>(null);
@@ -111,46 +118,41 @@ export default function SectionOverlays() {
 
   /* ---------------- experience tabs ---------------- */
   const [activeJob, setActiveJob] = useState(0);
-  const job = EXPERIENCE[activeJob];
+  const job = t.experience[activeJob];
 
   /* ---------------- projects hover chip ---------------- */
   const hoveredId = useUIStore((s) => s.hoveredProject);
   const hovered = hoveredId
-    ? (PROJECTS.find((pr) => pr.id === hoveredId) ?? null)
+    ? (t.projects.find((pr) => pr.id === hoveredId) ?? null)
     : null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-10">
       {/* ============ 01 // ABOUT ============ */}
-      <div className="absolute inset-y-0 left-0 flex items-center">
+      {/* Mobile: edge-to-edge card centered. Desktop: left-anchored, wide. */}
+      <div className="absolute inset-y-0 left-0 flex items-center px-4 lg:px-0">
         <div
           ref={aboutRef}
-          style={{
-            ...HIDDEN,
-            background:
-              "linear-gradient(150deg, rgba(14,20,42,0.94), rgba(6,8,20,0.94))",
-            boxShadow:
-              "0 0 40px rgba(5,8,20,0.7), 0 0 24px rgba(76,201,240,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
-            backdropFilter: "blur(18px)",
-          }}
-          className="hud-corners ml-8 w-[470px] max-w-[calc(100vw-4rem)] rounded-2xl border border-hud/25 p-8 lg:ml-16"
+          style={{ ...HIDDEN, ...PANEL_STYLE }}
+          className="hud-corners w-full max-w-[470px] rounded-2xl border border-hud/25 p-6 sm:p-8 lg:ml-16"
         >
-          <Kicker>01 // About</Kicker>
-          <h2 className="mt-3 font-display text-[40px] font-bold leading-[1.05] text-star">
-            Full stack, fewer <span className="text-cyan">bottlenecks</span>
+          <Kicker>{t.ui.about.kicker}</Kicker>
+          <h2 className="mt-3 font-display text-[30px] font-bold leading-[1.05] text-star sm:text-[40px]">
+            {t.ui.about.headingLead}
+            <span className="text-cyan">{t.ui.about.headingHighlight}</span>
           </h2>
           <p className="mt-5 text-[15px] leading-relaxed text-white/85">
-            {PROFILE.about.lead}
+            {t.profile.about.lead}
           </p>
           <p className="mt-4 text-sm leading-relaxed text-white/75">
-            {PROFILE.about.p2}
+            {t.profile.about.p2}
           </p>
           <p className="mt-4 text-sm leading-relaxed text-white/75">
-            {PROFILE.about.p3}
+            {t.profile.about.p3}
           </p>
           <div className="hud-line mt-6" />
           <ul className="mt-5 space-y-2">
-            {PROFILE.about.credentials.map((cred) => (
+            {t.profile.about.credentials.map((cred) => (
               <li
                 key={cred}
                 className="font-mono text-xs uppercase tracking-wide text-star/85"
@@ -163,29 +165,22 @@ export default function SectionOverlays() {
       </div>
 
       {/* ============ 02 // EXPERIENCE ============ */}
-      <div className="absolute inset-y-0 right-0 flex items-center">
+      <div className="absolute inset-y-0 right-0 flex items-center px-4 lg:px-0">
         <div
           ref={experienceRef}
-          style={{
-            ...HIDDEN,
-            background:
-              "linear-gradient(150deg, rgba(14,20,42,0.94), rgba(6,8,20,0.94))",
-            boxShadow:
-              "0 0 40px rgba(5,8,20,0.7), 0 0 24px rgba(76,201,240,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
-            backdropFilter: "blur(18px)",
-          }}
-          className="hud-corners pointer-events-auto mr-8 w-[560px] max-w-[calc(100vw-4rem)] rounded-2xl border border-hud/25 p-8 lg:mr-24"
+          style={{ ...HIDDEN, ...PANEL_STYLE }}
+          className="hud-corners pointer-events-auto w-full max-w-[560px] rounded-2xl border border-hud/25 p-6 sm:p-8 lg:mr-24"
         >
-          <Kicker>02 // Where I&apos;ve worked</Kicker>
+          <Kicker>{t.ui.experience.kicker}</Kicker>
 
-          <div className="mt-4 flex gap-3">
-            {EXPERIENCE.map((j, i) => (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {t.experience.map((j, i) => (
               <button
                 key={j.company}
                 type="button"
                 data-cursor="hover"
                 onClick={() => setActiveJob(i)}
-                className={`rounded-full border px-5 py-2 font-mono text-xs uppercase tracking-[0.14em] transition-colors ${
+                className={`rounded-full border px-4 py-2 font-mono text-xs uppercase tracking-[0.14em] transition-colors ${
                   i === activeJob
                     ? "border-cyan bg-cyan/15 text-cyan-bright shadow-[0_0_14px_rgba(76,201,240,0.25)]"
                     : "border-white/20 text-star/70 hover:border-white/40 hover:text-star"
@@ -196,7 +191,7 @@ export default function SectionOverlays() {
             ))}
           </div>
 
-          <h3 className="mt-5 font-display text-[22px] font-bold leading-snug text-white">
+          <h3 className="mt-5 font-display text-[20px] font-bold leading-snug text-white sm:text-[22px]">
             {job.title} <span className="text-cyan">@ {job.company}</span>
           </h3>
           <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.18em] text-hud/90">
@@ -208,14 +203,18 @@ export default function SectionOverlays() {
 
           <div className="hud-line mt-4" />
 
+          {/* Touch-scrollable bullet list (stopPropagation so wheel/touch
+              inside doesn't hijack the page's Lenis scroll runway). */}
           <ul
             key={activeJob}
             onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
             style={{
               scrollbarWidth: "thin",
               scrollbarColor: "rgba(76,201,240,0.35) transparent",
+              WebkitOverflowScrolling: "touch",
             }}
-            className="mt-4 max-h-[300px] space-y-3 overflow-y-auto pr-2"
+            className="mt-4 max-h-[260px] space-y-3 overflow-y-auto pr-2 lg:max-h-[300px]"
           >
             {job.points.map((point) => (
               <li
@@ -231,51 +230,51 @@ export default function SectionOverlays() {
       </div>
 
       {/* ============ SKILLS ============ */}
-      <div className="absolute inset-x-0 top-28 flex justify-center">
+      <div className="absolute inset-x-0 top-28 flex justify-center px-4">
         <div ref={skillsRef} style={HIDDEN} className="px-6 text-center">
-          <Kicker>{"// Systems check"}</Kicker>
+          <Kicker>{t.ui.skills.kicker}</Kicker>
           <h2
-            className="mt-2 font-display text-[28px] font-bold text-star"
+            className="mt-2 font-display text-[24px] font-bold text-star sm:text-[28px]"
             style={{
               textShadow:
                 "0 0 24px rgba(76,201,240,0.45), 0 0 64px rgba(124,58,237,0.35)",
             }}
           >
-            Skill modules online
+            {t.ui.skills.heading}
           </h2>
-          <p className="mt-2 font-mono text-xs tracking-[0.3em] text-white/40">
-            FLY THROUGH THE CALIBRATION CORRIDOR
+          <p className="mt-2 font-mono text-[10px] tracking-[0.2em] text-white/40 sm:text-xs sm:tracking-[0.3em]">
+            {t.ui.skills.subheading}
           </p>
         </div>
       </div>
 
       {/* ============ 03 // PROJECTS ============ */}
-      <div className="absolute left-8 top-28 lg:left-16">
+      <div className="absolute left-4 top-28 px-2 lg:left-16 lg:px-0">
         <div ref={projectsRef} style={HIDDEN}>
-          <Kicker>03 // Some things I&apos;ve built</Kicker>
+          <Kicker>{t.ui.projects.kicker}</Kicker>
           <h2
-            className="mt-2 font-display text-[34px] font-bold text-star"
+            className="mt-2 font-display text-[28px] font-bold text-star sm:text-[34px]"
             style={{ textShadow: "0 0 28px rgba(124,58,237,0.4)" }}
           >
-            Projects in orbit
+            {t.ui.projects.heading}
           </h2>
           <p className="mt-3 animate-blink font-mono text-xs tracking-[0.2em] text-hud">
-            ▸ CLICK A CARD TO INSPECT
+            {t.ui.projects.inspectHint}
           </p>
           <a
-            href={ARCHIVE_URL}
+            href={t.archiveUrl}
             target="_blank"
             rel="noreferrer"
             data-cursor="hover"
             className="pointer-events-auto mt-3 inline-block font-mono text-xs text-star/60 underline-offset-4 transition-colors hover:text-cyan hover:underline"
           >
-            Explore the archive ↗
+            {t.ui.projects.archive}
           </a>
         </div>
       </div>
 
-      {/* target-locked hint chip */}
-      <div className="absolute bottom-8 right-8">
+      {/* target-locked hint chip — desktop only (mobile lacks hover) */}
+      <div className="absolute bottom-8 right-8 hidden lg:block">
         <AnimatePresence mode="wait">
           {hovered && (
             <motion.div
@@ -288,7 +287,7 @@ export default function SectionOverlays() {
             >
               <span className="block h-1.5 w-1.5 rotate-45 animate-blink bg-cyan shadow-[0_0_8px_rgba(76,201,240,0.9)]" />
               <span className="font-mono text-[10px] tracking-[0.22em] text-hud">
-                TARGET LOCKED // {hovered.title.toUpperCase()}
+                {t.ui.projects.targetLocked} {hovered.title.toUpperCase()}
               </span>
             </motion.div>
           )}
@@ -296,38 +295,31 @@ export default function SectionOverlays() {
       </div>
 
       {/* ============ 04 // CONTACT ============ */}
-      <div className="absolute inset-y-0 right-0 flex items-center">
+      <div className="absolute inset-y-0 right-0 flex items-center px-4 lg:px-0">
         <div
           ref={contactRef}
-          style={{
-            ...HIDDEN,
-            background:
-              "linear-gradient(150deg, rgba(14,20,42,0.94), rgba(6,8,20,0.94))",
-            boxShadow:
-              "0 0 40px rgba(5,8,20,0.7), 0 0 24px rgba(76,201,240,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
-            backdropFilter: "blur(18px)",
-          }}
-          className="hud-corners pointer-events-auto mr-8 w-[460px] max-w-[calc(100vw-4rem)] rounded-2xl border border-hud/25 p-8 lg:mr-24"
+          style={{ ...HIDDEN, ...PANEL_STYLE }}
+          className="hud-corners pointer-events-auto w-full max-w-[460px] rounded-2xl border border-hud/25 p-6 sm:p-8 lg:mr-24"
         >
-          <Kicker>04 // What&apos;s next</Kicker>
-          <h2 className="mt-2 font-display text-[34px] font-bold leading-[1.08] text-star">
-            Let&apos;s make something{" "}
-            <span className="text-cyan">together</span>.
+          <Kicker>{t.ui.contact.kicker}</Kicker>
+          <h2 className="mt-2 font-display text-[28px] font-bold leading-[1.08] text-star sm:text-[34px]">
+            {t.ui.contact.headingLead}
+            <span className="text-cyan">{t.ui.contact.headingHighlight}</span>
           </h2>
           <p className="mt-4 text-[15px] leading-relaxed text-white/80">
-            {CONTACT_COPY}
+            {t.ui.contact.copy}
           </p>
 
           {/* No backend, no forms — straight to the inbox */}
           <a
-            href={`mailto:${PROFILE.email}`}
+            href={`mailto:${t.profile.email}`}
             data-cursor="hover"
-            className="mt-7 block w-full rounded-full bg-gradient-to-r from-cyan to-nebula py-3.5 text-center font-display text-lg font-semibold tracking-wide text-space transition hover:brightness-110 active:scale-[0.98]"
+            className="mt-7 block w-full rounded-full bg-gradient-to-r from-cyan to-nebula py-3.5 text-center font-display text-base font-semibold tracking-wide text-space transition hover:brightness-110 active:scale-[0.98] sm:text-lg"
           >
-            {PROFILE.email} →
+            {t.profile.email} →
           </a>
-          <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-            Opens your mail app — I reply within 24h
+          <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-white/40 sm:tracking-[0.22em]">
+            {t.ui.contact.mailNote}
           </p>
 
           <div className="hud-line mt-6" />
@@ -335,7 +327,7 @@ export default function SectionOverlays() {
           <div className="mt-5 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <a
-                href={PROFILE.socials.github}
+                href={t.profile.socials.github}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="GitHub"
@@ -347,7 +339,7 @@ export default function SectionOverlays() {
                 </svg>
               </a>
               <a
-                href={PROFILE.socials.website}
+                href={t.profile.socials.website}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Website"
@@ -362,12 +354,12 @@ export default function SectionOverlays() {
               </a>
             </div>
             <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
-              GitHub · Website · Email
+              {t.ui.contact.socialsLabel}
             </span>
           </div>
 
           <p className="mt-5 font-mono text-[10px] tracking-[0.14em] text-white/25">
-            © 2026 HARRY YU — BUILT WITH NEXT.JS + R3F
+            {t.ui.contact.footer}
           </p>
         </div>
       </div>

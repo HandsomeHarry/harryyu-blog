@@ -12,11 +12,9 @@ import {
 } from "@/lib/journey";
 import { scrollState } from "@/lib/scroll";
 import { PROJECTS, type Project } from "@/lib/data";
+import { useI18n } from "@/lib/i18n";
 import { useUIStore } from "@/lib/store";
-import {
-  makeGlowTexture,
-  makeProjectCardTexture,
-} from "@/lib/textures";
+import { makeGlowTexture, makeProjectCardTexture } from "@/lib/textures";
 
 /**
  * The interactive centerpiece: the projects orbiting inside the ring like
@@ -214,7 +212,8 @@ export default function ProjectOrbit() {
   const rootRef = useRef<THREE.Group>(null);
   const carouselRef = useRef<THREE.Group>(null);
   const satRefs = useRef<(THREE.Mesh | null)[]>([null, null]);
-
+  const { t } = useI18n();
+  const projects = t.projects;
   const { cardGeo, glowGeo, satGeo, satMat } = useMemo(() => {
     return {
       cardGeo: new THREE.PlaneGeometry(CARD_W, CARD_H),
@@ -232,7 +231,6 @@ export default function ProjectOrbit() {
       }),
     };
   }, []);
-
   useEffect(() => {
     return () => {
       cardGeo.dispose();
@@ -287,7 +285,7 @@ export default function ProjectOrbit() {
       visible={false}
     >
       <group ref={carouselRef}>
-        {PROJECTS.map((project, i) => (
+        {projects.map((project, i) => (
           <ProjectCard
             key={project.id}
             project={project}

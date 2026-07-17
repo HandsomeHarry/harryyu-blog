@@ -4,6 +4,7 @@ import { useProgress } from "@react-three/drei";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useUIStore } from "@/lib/store";
+import { useI18n } from "@/lib/i18n";
 
 const MIN_SHOW_MS = 1400;
 const FORCE_HIDE_MS = 9000;
@@ -54,6 +55,7 @@ function RocketGlyph() {
 export default function Loader() {
   const ready = useUIStore((s) => s.ready);
   const { progress } = useProgress();
+  const { t } = useI18n();
   const [minElapsed, setMinElapsed] = useState(false);
   const [forced, setForced] = useState(false);
   const [gone, setGone] = useState(false);
@@ -113,7 +115,7 @@ export default function Loader() {
             </div>
 
             <p className="font-mono text-[10px] uppercase tracking-hud text-hud">
-              Initializing Launch Sequence
+              {t.ui.loader.initializing}
             </p>
 
             {/* Progress bar — driven by real download progress */}
