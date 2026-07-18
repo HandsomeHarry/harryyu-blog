@@ -41,15 +41,51 @@ function prepScene(scene: THREE.Group) {
       const mesh = o as THREE.Mesh;
       mesh.frustumCulled = true;
       const mat = mesh.material as THREE.MeshStandardMaterial;
-      if (mat && mat.isMeshStandardMaterial) mat.envMapIntensity = 0.7;
+      // transparent:true lets us crossfade opacity at section boundaries
+      // so models don't pop in/out (the "flash when flying through" bug).
+      // Base opacity stays 1 — modulation happens per-frame in useFrame.
+      if (mat && mat.isMeshStandardMaterial) {
+        mat.envMapIntensity = 0.7;
+        mat.transparent = true;
+      }
     }
   });
   return scene;
 }
 
+/**
+ * Collect every material under `root` (mesh + sprite) once, paired with its
+ * base opacity. Returning flat arrays keeps the per-frame fade loop tight
+ * (no traverse, no allocation) — we just index into them.
+ */
+function collectMaterials(root: THREE.Object3D): {
+  mats: THREE.Material[];
+  base: number[];
+} {
+  const mats: THREE.Material[] = [];
+  const base: number[] = [];
+  root.traverse((o) => {
+    const mesh = o as unknown as {
+      isMesh?: boolean;
+      isSprite?: boolean;
+      material?: THREE.Material | THREE.Material[];
+    };
+    if (!mesh.isMesh && !mesh.isSprite) return;
+    const list = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    for (const m of list) {
+      if (!m) continue;
+      mats.push(m);
+      base.push((m as THREE.Material & { opacity: number }).opacity);
+    }
+  });
+  return { mats, base };
+}
+
 function Astronaut() {
   const groupRef = useRef<THREE.Group>(null);
   const inner = useRef<THREE.Group>(null);
+  // Collected once on first visibility; flat arrays for the per-frame fade.
+  const fade = useRef<{ mats: THREE.Material[]; base: number[] } | null>(null);
   const { scene } = useGLTF("/models/astronaut.glb");
   const prepped = useMemo(() => prepScene(scene), [scene]);
 
@@ -69,8 +105,19 @@ function Astronaut() {
     const g = groupRef.current;
     if (!g) return;
     const p = scrollState.progress;
-    g.visible = p > 0.17 && p < 0.38;
+    // Crossfade over a window slightly wider than the old hard cut
+    // (0.17/0.38) so the model never pops in/out — the visibility gate
+    // still fires, but only once opacity is ~0.
+    const a =
+      THREE.MathUtils.smoothstep(p, 0.15, 0.19) *
+      (1 - THREE.MathUtils.smoothstep(p, 0.35, 0.39));
+    g.visible = a > 0.001;
     if (!g.visible) return;
+    if (!fade.current) fade.current = collectMaterials(g);
+    const { mats, base } = fade.current;
+    for (let i = 0; i < mats.length; i++) {
+      (mats[i] as THREE.Material & { opacity: number }).opacity = base[i] * a;
+    }
     if (inner.current) {
       inner.current.rotation.z += dt * 0.1;
       inner.current.rotation.x += dt * 0.06;
@@ -91,6 +138,7 @@ function Astronaut() {
 
 function ShipFlyby() {
   const groupRef = useRef<THREE.Group>(null);
+  const fade = useRef<{ mats: THREE.Material[]; base: number[] } | null>(null);
   const { scene } = useGLTF("/models/spaceship.glb");
   const prepped = useMemo(() => prepScene(scene), [scene]);
 
@@ -118,8 +166,17 @@ function ShipFlyby() {
     if (!g) return;
     const sp = sectionProgress(scrollState.progress, "skills");
     const t = THREE.MathUtils.smoothstep(sp, 0.05, 0.95);
-    g.visible = sp > 0.001 && sp < 0.999;
+    // Crossfade at the skills-section edges instead of a hard pop.
+    const a =
+      THREE.MathUtils.smoothstep(sp, 0.0, 0.06) *
+      (1 - THREE.MathUtils.smoothstep(sp, 0.94, 1.0));
+    g.visible = a > 0.001;
     if (!g.visible) return;
+    if (!fade.current) fade.current = collectMaterials(g);
+    const { mats, base } = fade.current;
+    for (let i = 0; i < mats.length; i++) {
+      (mats[i] as THREE.Material & { opacity: number }).opacity = base[i] * a;
+    }
     _pos.copy(SHIP_FROM).lerp(SHIP_TO, t);
     g.position.copy(_pos);
   });
@@ -146,6 +203,8 @@ function ShipFlyby() {
 function WorkStation() {
   const groupRef = useRef<THREE.Group>(null);
   const spinRef = useRef<THREE.Group>(null);
+  const beaconRef = useRef<THREE.PointLight>(null);
+  const fade = useRef<{ mats: THREE.Material[]; base: number[] } | null>(null);
   const { scene: issScene } = useGLTF("/models/iss.glb");
 
   // Compute the recenter offset without mutating or reparenting the GLTF
@@ -162,6 +221,7 @@ function WorkStation() {
         const mat = mesh.material as THREE.MeshStandardMaterial;
         if (mat && mat.isMeshStandardMaterial) {
           mat.envMapIntensity = 1.1;
+          mat.transparent = true;
         }
       }
     });
@@ -186,14 +246,25 @@ function WorkStation() {
     const g = groupRef.current;
     if (!g) return;
     const p = scrollState.progress;
-    g.visible = p > 0.3 && p < 0.54;
+    // Crossfade the whole station (meshes + beacon) over a window wider
+    // than the old hard cut (0.3/0.54) so the 4.4MB ISS never pops.
+    const a =
+      THREE.MathUtils.smoothstep(p, 0.27, 0.32) *
+      (1 - THREE.MathUtils.smoothstep(p, 0.52, 0.57));
+    g.visible = a > 0.001;
     if (!g.visible) return;
+    if (!fade.current) fade.current = collectMaterials(g);
+    const { mats, base } = fade.current;
+    for (let i = 0; i < mats.length; i++) {
+      (mats[i] as THREE.Material & { opacity: number }).opacity = base[i] * a;
+    }
     if (spinRef.current) spinRef.current.rotation.y += dt * 0.025;
     const sp = sectionProgress(p, "experience");
     const alpha =
       THREE.MathUtils.smoothstep(sp, 0.05, 0.3) *
       (1 - THREE.MathUtils.smoothstep(sp, 0.85, 1));
     label.mat.opacity = alpha * 0.9;
+    if (beaconRef.current) beaconRef.current.intensity = 4 * a;
     if (labelRef.current) labelRef.current.quaternion.copy(state.camera.quaternion);
   });
 
@@ -210,7 +281,7 @@ function WorkStation() {
         </group>
       </Float>
       {/* Blinking beacon */}
-      <pointLight color="#4cc9f0" intensity={4} distance={14} decay={2} />
+      <pointLight ref={beaconRef} color="#4cc9f0" intensity={4} distance={14} decay={2} />
       <mesh ref={labelRef} position={[0, 4.6, 0]} renderOrder={20}>
         <planeGeometry args={[4.2, 4.2 / label.aspect]} />
         <primitive object={label.mat} attach="material" />
