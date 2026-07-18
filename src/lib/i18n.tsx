@@ -228,17 +228,16 @@ const profileZh: typeof PROFILE = {
 
 const experienceZh: Job[] = [
   {
-    company: "北京大学 —— HOME 实验室",
-    title: "研究助理 · 实时三维人体姿态估计",
-    range: "2025 年 6 月 — 2025 年 12 月",
-    location: "中国 北京",
-    blurb: "参与基于稀疏传感器的三维运动重建研究，用于实时人体姿态估计。",
+    company: "DIY Perks（Bilibili 授权频道）",
+    title: "频道主理人 · 翻译与校对",
+    range: "2020 年 11 月 — 至今",
+    location: "线上",
+    blurb: "带领 7 人团队在中文平台本地化创作者内容——160+ 视频、2.5 亿+ 播放、100 万+ 粉丝。",
     points: [
-      "实现了校准流程和关键点融合，用于实时姿态估计管线",
-      "开发了追踪中间结果的验证方法，监测关节稳定性、时间一致性与延迟",
-      "发现了表面视觉检查难以察觉的重建不稳定性",
-      "围绕校准精度、置信度阈值和时间平滑策略进行系统性假设检验",
-      "将技术决策与下游 HCI 应用联系起来，探索传感器布局与运动表示如何实现更自然的虚拟角色交互",
+      "带领 7 人团队在 Bilibili / 腾讯 / 百度 / 西瓜等平台本地化并发布创作者内容，规范了翻译与质检流程",
+      "发布了 160+ 部翻译/校对视频，累计播放量 2.5 亿次；上线首月即增长至 100 万+ 粉丝",
+      "洽谈了 6 个品牌合作（柔宇、Flexispot、Influcity），带来 25,000 美元以上的赞助收入",
+      "用 Python + Excel 搭建了付款与税务跟踪的自动化——将每月的会计工作从 8 小时压缩到 1 小时",
     ],
   },
   {
@@ -255,16 +254,17 @@ const experienceZh: Job[] = [
     ],
   },
   {
-    company: "DIY Perks（Bilibili 授权频道）",
-    title: "频道主理人 · 翻译与校对",
-    range: "2020 年 11 月 — 至今",
-    location: "线上",
-    blurb: "带领 7 人团队在中文平台本地化创作者内容——160+ 视频、2.5 亿+ 播放、100 万+ 粉丝。",
+    company: "北京大学 —— HOME 实验室",
+    title: "研究助理 · 实时三维人体姿态估计",
+    range: "2025 年 6 月 — 2025 年 12 月",
+    location: "中国 北京",
+    blurb: "参与基于稀疏传感器的三维运动重建研究，用于实时人体姿态估计。",
     points: [
-      "带领 7 人团队在 Bilibili / 腾讯 / 百度 / 西瓜等平台本地化并发布创作者内容，规范了翻译与质检流程",
-      "发布了 160+ 部翻译/校对视频，累计播放量 2.5 亿次；上线首月即增长至 100 万+ 粉丝",
-      "洽谈了 6 个品牌合作（柔宇、Flexispot、Influcity），带来 25,000 美元以上的赞助收入",
-      "用 Python + Excel 搭建了付款与税务跟踪的自动化——将每月的会计工作从 8 小时压缩到 1 小时",
+      "实现了校准流程和关键点融合，用于实时姿态估计管线",
+      "开发了追踪中间结果的验证方法，监测关节稳定性、时间一致性与延迟",
+      "发现了表面视觉检查难以察觉的重建不稳定性",
+      "围绕校准精度、置信度阈值和时间平滑策略进行系统性假设检验",
+      "将技术决策与下游 HCI 应用联系起来，探索传感器布局与运动表示如何实现更自然的虚拟角色交互",
     ],
   },
   {
@@ -390,8 +390,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   // effect (not a lazy useState initializer) because localStorage/navigator
   // are unavailable during SSR — reading them during render would cause a
   // hydration mismatch. One post-mount setState is the correct pattern here.
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect --
+       one-shot post-mount hydration from localStorage/navigator; cannot
+       run during render without causing a hydration mismatch. */
     setLocaleState(detectInitialLocale());
   }, []);
 

@@ -417,44 +417,52 @@ export default function SpaceEnvironment() {
     if (envGroup.current) envGroup.current.position.copy(cam.position);
     sky.mat.uniforms.uTime.value = t;
 
-    /* comet streaks — drift, wrap, orient along velocity, pulse */
+    /* comet streaks — drift, wrap, orient along velocity, pulse.
+       Color twinkle is throttled (~12Hz): it's a subtle effect but forces
+       a full instanceColor buffer upload every frame, which is the costly
+       part. Positions still update every frame (motion must stay smooth). */
     {
       const { mesh, pos, vel, unit, len, phase, pulse, baseCol, colorAttr, N } =
         comets;
-      const carr = colorAttr.array as Float32Array;
-      const cx = cam.position.x;
-      const cy = cam.position.y;
-      const cz = cam.position.z;
-      for (let i = 0; i < N; i++) {
-        const i3 = i * 3;
-        let px = pos[i3] + vel[i3] * dt;
-        let py = pos[i3 + 1] + vel[i3 + 1] * dt;
-        let pz = pos[i3 + 2] + vel[i3 + 2] * dt;
-        if (px > COMET_X) px -= COMET_X * 2;
-        else if (px < -COMET_X) px += COMET_X * 2;
-        if (py > COMET_Y) py -= COMET_Y * 2;
-        else if (py < -COMET_Y) py += COMET_Y * 2;
-        if (pz < COMET_Z_NEAR - COMET_Z_SPAN) pz += COMET_Z_SPAN;
-        else if (pz > COMET_Z_NEAR) pz -= COMET_Z_SPAN;
-        pos[i3] = px;
-        pos[i3 + 1] = py;
-        pos[i3 + 2] = pz;
-        mesh.setMatrixAt(
-          i,
-          composeStreak(
-            px, py, pz,
-            unit[i3], unit[i3 + 1], unit[i3 + 2],
-            cx, cy, cz,
-            len[i], 0.075
-          )
-        );
-        const tw = 0.55 + 0.45 * Math.sin(t * pulse[i] + phase[i]);
-        carr[i3] = baseCol[i3] * tw;
-        carr[i3 + 1] = baseCol[i3 + 1] * tw;
-        carr[i3 + 2] = baseCol[i3 + 2] * tw;
+      if (mesh.visible) {
+        const carr = colorAttr.array as Float32Array;
+        const cx = cam.position.x;
+        const cy = cam.position.y;
+        const cz = cam.position.z;
+        const twinkle = ((t * 12) | 0) !== (((t - dt) * 12) | 0);
+        for (let i = 0; i < N; i++) {
+          const i3 = i * 3;
+          let px = pos[i3] + vel[i3] * dt;
+          let py = pos[i3 + 1] + vel[i3 + 1] * dt;
+          let pz = pos[i3 + 2] + vel[i3 + 2] * dt;
+          if (px > COMET_X) px -= COMET_X * 2;
+          else if (px < -COMET_X) px += COMET_X * 2;
+          if (py > COMET_Y) py -= COMET_Y * 2;
+          else if (py < -COMET_Y) py += COMET_Y * 2;
+          if (pz < COMET_Z_NEAR - COMET_Z_SPAN) pz += COMET_Z_SPAN;
+          else if (pz > COMET_Z_NEAR) pz -= COMET_Z_SPAN;
+          pos[i3] = px;
+          pos[i3 + 1] = py;
+          pos[i3 + 2] = pz;
+          mesh.setMatrixAt(
+            i,
+            composeStreak(
+              px, py, pz,
+              unit[i3], unit[i3 + 1], unit[i3 + 2],
+              cx, cy, cz,
+              len[i], 0.075
+            )
+          );
+          if (twinkle) {
+            const tw = 0.55 + 0.45 * Math.sin(t * pulse[i] + phase[i]);
+            carr[i3] = baseCol[i3] * tw;
+            carr[i3 + 1] = baseCol[i3 + 1] * tw;
+            carr[i3 + 2] = baseCol[i3 + 2] * tw;
+          }
+        }
+        mesh.instanceMatrix.needsUpdate = true;
+        if (twinkle) colorAttr.needsUpdate = true;
       }
-      mesh.instanceMatrix.needsUpdate = true;
-      colorAttr.needsUpdate = true;
     }
 
     /* warp streaks — velocity-reactive, wrap relative to camera z */
@@ -510,7 +518,6 @@ export default function SpaceEnvironment() {
       astCursor.current = (start + AST_STEP) % N;
       mesh.instanceMatrix.needsUpdate = true;
     }
-
   });
 
   return (
@@ -518,8 +525,8 @@ export default function SpaceEnvironment() {
       {/* Infinity layer: nebula skybox + far starfields, follow the camera */}
       <group ref={envGroup}>
         <mesh geometry={sky.geo} material={sky.mat} renderOrder={-1} />
-        <Stars radius={170} depth={60} count={4000} factor={3} saturation={0} fade speed={0.4} />
-        <Stars radius={300} depth={60} count={2500} factor={5} saturation={0} fade speed={0.4} />
+        <Stars radius={170} depth={60} count={2500} factor={3} saturation={0} fade speed={0.4} />
+        <Stars radius={300} depth={60} count={1500} factor={5} saturation={0} fade speed={0.4} />
       </group>
 
       {/* Comet streaks / warp lines / asteroid fields */}

@@ -166,12 +166,11 @@ export default function Experience() {
         gl={{
           // The EffectComposer renders via its own targets — canvas MSAA
           // would only burn memory without touching the composed output
-          antialias: false,
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.1,
           powerPreference: "high-performance",
         }}
-        camera={{ position: [0, 0.4, 10], fov: 45, near: 0.1, far: 400 }}
+        camera={{ position: [0, 0.4, 10], fov: 45, near: 0.1, far: 320 }}
         onCreated={(state) => {
           state.scene.fog = new THREE.FogExp2("#0a0618", 0.0035);
           // Handle for console debugging / tests

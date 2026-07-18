@@ -49,18 +49,17 @@ export type Job = {
 
 export const EXPERIENCE: Job[] = [
   {
-    company: "Peking University — HOME Lab",
-    title: "Research Assistant, Real-Time 3D Human Pose Estimation",
-    range: "Jun 2025 — Dec 2025",
-    location: "Beijing, China",
+    company: "DIY Perks (Authorized Bilibili Channel)",
+    title: "Channel Operator, Translator & Proofreader",
+    range: "Nov 2020 — Present",
+    location: "Online",
     blurb:
-      "Contributed to sparse-sensor-based 3D motion reconstruction research for real-time human pose estimation.",
+      "Led a 7-member team localizing creator content across Chinese platforms — 160+ videos, 250M+ views, 1M+ followers.",
     points: [
-      "Implemented calibration procedures and keypoint integration for real-time pose-estimation pipelines",
-      "Developed validation methods tracing intermediate results — monitoring joint stability, temporal consistency, and latency",
-      "Identified reconstruction instabilities that surface-level visual inspection missed",
-      "Tested hypotheses around calibration accuracy, confidence thresholding, and temporal smoothing strategies",
-      "Connected technical decisions to downstream HCI applications — sensor placement and motion representations for natural virtual character interaction",
+      "Led a 7-member team localizing and publishing creator content across Bilibili / Tencent / Baidu / Xigua, standardizing translation and QA workflows",
+      "Shipped 160+ translated/proofread videos with 250M cumulative views; grew to 1M+ followers within the first month of launch",
+      "Negotiated 6 brand partnerships (Royole, Flexispot, Influcity) generating $25,000+ in sponsorship revenue",
+      "Built Python + Excel automation for payouts and tax tracking — cut monthly accounting from 8 hours to 1 hour and improved payout accuracy",
     ],
   },
   {
@@ -78,17 +77,18 @@ export const EXPERIENCE: Job[] = [
     ],
   },
   {
-    company: "DIY Perks (Authorized Bilibili Channel)",
-    title: "Channel Operator, Translator & Proofreader",
-    range: "Nov 2020 — Present",
-    location: "Online",
+    company: "Peking University — HOME Lab",
+    title: "Research Assistant, Real-Time 3D Human Pose Estimation",
+    range: "Jun 2025 — Dec 2025",
+    location: "Beijing, China",
     blurb:
-      "Led a 7-member team localizing creator content across Chinese platforms — 160+ videos, 250M+ views, 1M+ followers.",
+      "Contributed to sparse-sensor-based 3D motion reconstruction research for real-time human pose estimation.",
     points: [
-      "Led a 7-member team localizing and publishing creator content across Bilibili / Tencent / Baidu / Xigua, standardizing translation and QA workflows",
-      "Shipped 160+ translated/proofread videos with 250M cumulative views; grew to 1M+ followers within the first month of launch",
-      "Negotiated 6 brand partnerships (Royole, Flexispot, Influcity) generating $25,000+ in sponsorship revenue",
-      "Built Python + Excel automation for payouts and tax tracking — cut monthly accounting from 8 hours to 1 hour and improved payout accuracy",
+      "Implemented calibration procedures and keypoint integration for real-time pose-estimation pipelines",
+      "Developed validation methods tracing intermediate results — monitoring joint stability, temporal consistency, and latency",
+      "Identified reconstruction instabilities that surface-level visual inspection missed",
+      "Tested hypotheses around calibration accuracy, confidence thresholding, and temporal smoothing strategies",
+      "Connected technical decisions to downstream HCI applications — sensor placement and motion representations for natural virtual character interaction",
     ],
   },
   {
