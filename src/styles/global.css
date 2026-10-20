@@ -1,0 +1,829 @@
+/* ============================================================
+   harryyu.dev — global styles
+   Style after softlabor.biz: flat ground, black serif type,
+   hairline rules, and a print-noise displacement filter that
+   lets text come into focus on hover. Construction stays
+   exposed: visible grid guides, registration marks.
+   ============================================================ */
+
+/* Chinese name glyphs: Noto Sans SC subset to 于士一 (U+4E00, U+4E8E, U+58EB).
+   1.2KB total; unicode-range means the browser pulls it only for these chars. */
+@font-face {
+  font-family: "Noto Sans SC";
+  src: url("/fonts/name-zh.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+4E00, U+4E8E, U+58EB;
+}
+
+/* ---------- Design tokens ---------- */
+
+:root {
+  /* day: the softlabor ground — flat peach, black ink */
+  --paper: #fcd1b1;
+  --ink: #000000;
+  --ink-soft: #5a4838;
+  /* structure lines are plain black, like their rules */
+  --concrete: #000000;
+  --signal: #e9967a; /* salmon: selection, lamp accents */
+
+  /* derived */
+  --hairline: color-mix(in srgb, var(--ink) 22%, transparent);
+  --hairline-soft: color-mix(in srgb, var(--ink) 8%, transparent);
+  --slab-bg: transparent;
+  --slab-bg-deep: color-mix(in srgb, var(--ink) 4%, var(--paper));
+  --focus-ring: var(--ink);
+
+  color-scheme: light;
+
+  /* type: Times-metric serif everywhere; mono only for data */
+  --font-display: "Tinos", "Noto Sans SC", Georgia, "Times New Roman", serif;
+  --font-body: "Tinos", "Noto Sans SC", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
+
+  /* 8px base scale */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s6: 48px;
+  --s8: 64px;
+  --s12: 96px;
+
+  /* layout */
+  --maxw: 1200px;
+  --gutter: clamp(20px, 4vw, 48px);
+  --cantilever: clamp(24px, 5vw, 80px);
+
+  /* motion */
+  --t-fast: 120ms;
+  --t-med: 180ms;
+  --ease: cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* night drive — the negative: black ground, peach type, amber lamps */
+[data-theme="night"] {
+  --paper: #141210;
+  --ink: #fcd1b1;
+  --ink-soft: #c7a488;
+  --concrete: #fcd1b1;
+  --signal: #e8a33d;
+  --hairline: color-mix(in srgb, var(--ink) 26%, transparent);
+  --hairline-soft: color-mix(in srgb, var(--ink) 10%, transparent);
+  --focus-ring: var(--signal);
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --paper: #141210;
+    --ink: #fcd1b1;
+    --ink-soft: #c7a488;
+    --concrete: #fcd1b1;
+    --signal: #e8a33d;
+    --hairline: color-mix(in srgb, var(--ink) 26%, transparent);
+    --hairline-soft: color-mix(in srgb, var(--ink) 10%, transparent);
+    --focus-ring: var(--signal);
+    color-scheme: dark;
+  }
+}
+
+/* ---------- Print-noise typography (the softlabor signature) ----------
+   Static fractal-noise displacement over type; hovering snaps it
+   into focus. Disabled on small screens and reduced motion. */
+
+.noisy {
+  filter: url(#noise-content);
+}
+
+.noisy-h {
+  filter: url(#noise-heading);
+}
+
+/* hover/focus resolution is JS-driven (per-element filters scaled to
+   font size, 1500ms in / 750ms out — see BaseLayout island); no-JS
+   visitors keep the static texture, small screens and reduced motion
+   get crisp type */
+
+@media (max-width: 760px) {
+  .noisy,
+  .noisy-h {
+    filter: none;
+  }
+}
+
+/* ---------- Reset-ish ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 25px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color var(--t-med) var(--ease),
+    color var(--t-med) var(--ease);
+}
+
+::selection {
+  background-color: var(--signal);
+  color: #000;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0 0 var(--s2);
+}
+
+p {
+  margin: 0 0 var(--s2);
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 0.25em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* mono metadata blocks */
+.mono {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* labels: serif, uppercase, tracked out, centered (softlabor meta) */
+.label {
+  font-family: var(--font-body);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  margin: 0 0 var(--s2);
+  text-align: center;
+}
+
+/* ---------- Page frame ---------- */
+
+.wrap {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--s3);
+  /* construction exposed: the 12-column guides are visible, not implied */
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--hairline-soft) 0,
+    var(--hairline-soft) 1px,
+    transparent 1px,
+    transparent calc(100% / 12)
+  );
+}
+
+/* registration marks on the page frame, like a print sheet */
+.masthead,
+.footer {
+  position: relative;
+}
+
+.masthead::before,
+.masthead::after,
+.footer::before,
+.footer::after {
+  content: "+";
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+
+.masthead::before {
+  left: 4px;
+  bottom: -6px;
+}
+
+.masthead::after {
+  right: 4px;
+  bottom: -6px;
+}
+
+.footer::before {
+  left: 4px;
+  top: -6px;
+}
+
+.footer::after {
+  right: 4px;
+  top: -6px;
+}
+
+/* rules: solid, like their hr */
+.rule {
+  border: 0;
+  border-top: 1px solid var(--ink);
+  opacity: 0.25;
+  margin: var(--s6) 0;
+}
+
+/* ---------- Cantilevered slabs (flat, hairline) ---------- */
+
+.slab {
+  position: relative;
+  grid-column: 1 / -1;
+  background: var(--slab-bg);
+  border: 1px solid var(--ink);
+  padding: var(--s4) var(--s3);
+  transition: transform var(--t-med) var(--ease),
+    opacity var(--t-med) var(--ease);
+}
+
+.slab--cant-left {
+  margin-left: calc(-1 * var(--cantilever));
+}
+
+.slab--cant-right {
+  margin-right: calc(-1 * var(--cantilever));
+}
+
+/* section header: flat, centered, hairline below */
+.slab-header {
+  text-align: center;
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: var(--s2);
+  margin-bottom: var(--s3);
+}
+
+.slab-header h2 {
+  font-size: clamp(35px, 4.4vw, 48px);
+  margin: 0;
+}
+
+.slab-header .label {
+  margin: 0 0 var(--s1);
+}
+
+/* ---------- Scroll reveal (progressive enhancement) ---------- */
+
+html.js .slab {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+html.js .slab.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Skip link ---------- */
+
+.skip {
+  position: absolute;
+  left: var(--s2);
+  top: -100px;
+  z-index: 100;
+  background: var(--ink);
+  color: var(--paper);
+  padding: var(--s1) var(--s2);
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.skip:focus {
+  top: var(--s2);
+}
+
+/* ---------- Masthead (softlabor 1:1: brand + inline nav, one row) ---------- */
+
+.masthead {
+  border-bottom: 1px solid var(--ink);
+  padding: var(--s2) 0;
+}
+
+.masthead-inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--s1);
+  text-align: center;
+}
+
+.masthead-brand {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+}
+
+.masthead .wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.masthead .nav {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.masthead .nav li {
+  display: inline;
+  margin: 0 0.5rem;
+}
+
+.masthead .nav a {
+  color: inherit;
+  text-decoration: none;
+  font-size: 14px;
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.masthead .nav a:hover,
+.masthead .nav a:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+/* ---------- Hotkey HUD ---------- */
+
+.hotkey-hud {
+  position: fixed;
+  left: var(--s2);
+  bottom: var(--s2);
+  z-index: 50;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  padding: 6px 10px;
+  max-width: 44vw;
+}
+
+.hotkey-hud kbd {
+  font-family: inherit;
+  color: var(--ink);
+  border: 1px solid var(--hairline);
+  padding: 0 4px;
+  margin-right: 2px;
+}
+
+@media (max-width: 640px) {
+  .hotkey-hud {
+    display: none; /* thumb keyboards; hotkeys are a desktop affordance */
+  }
+}
+
+/* ---------- Help overlay ---------- */
+
+.help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--paper) 90%, transparent);
+}
+
+.help-overlay[hidden] {
+  display: none;
+}
+
+.help-card {
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  padding: var(--s3);
+  max-width: 420px;
+  width: min(90vw, 420px);
+}
+
+.help-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 16px;
+}
+
+.help-card td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--hairline-soft);
+}
+
+.help-card td:first-child {
+  white-space: nowrap;
+}
+
+/* ---------- Buttons: flat plate, inverts on hover ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  padding: 9px 16px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-decoration: none;
+  transition: background-color var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+
+.btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* ---------- The car: one 944 as the page backdrop ---------- */
+
+.bg-car {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  color: var(--ink-soft);
+  overflow: hidden;
+}
+
+/* sits centred in the band between the header rule and the page bottom,
+   then nudged down by 10% of its own height */
+.car-frame {
+  position: absolute;
+  left: 50%;
+  top: calc((100vh + var(--head-h, 72px)) / 2);
+  transform: translate(-50%, -38%);
+  width: max(880px, 124vw);
+  perspective: 1200px;
+}
+
+.car-frame > .car-svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: 0.55;
+  /* the middle of the car clears out so the words stay readable;
+     the sides — where the lamps are — keep their weight */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    #000 20%,
+    rgba(0, 0, 0, 0.35) 30%,
+    rgba(0, 0, 0, 0.04) 40%,
+    rgba(0, 0, 0, 0.04) 60%,
+    rgba(0, 0, 0, 0.35) 70%,
+    #000 80%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0%,
+    #000 20%,
+    rgba(0, 0, 0, 0.35) 30%,
+    rgba(0, 0, 0, 0.04) 40%,
+    rgba(0, 0, 0, 0.04) 60%,
+    rgba(0, 0, 0, 0.35) 70%,
+    #000 80%,
+    #000 100%
+    );
+}
+
+/* content sits above the drawing */
+.masthead,
+main,
+.hotkey-hud,
+.help-overlay {
+  position: relative;
+  z-index: 1;
+}
+
+/* Rigid headlight meshes: full-opacity sibling of the masked car artwork.
+   Depth-sorted opaque fills occlude the lid; it never fades away. */
+.headlight-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.headlight-face {
+  stroke: var(--ink-soft);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+  fill: var(--paper);
+}
+
+.face-lid {
+  fill: var(--paper);
+  stroke: none;
+  transition: fill var(--t-med) var(--ease);
+}
+/* Original hand-shaped SVG ribbon: its width varies with the car linework.
+   Only the ink is translucent; the underlying cover stays fully opaque. */
+.lid-ink {
+  fill: var(--ink-soft);
+  fill-opacity: .55;
+  stroke: none;
+  transition: fill var(--t-med) var(--ease);
+}
+.face-rear { fill: color-mix(in srgb, var(--paper) 72%, #171715); }
+.face-side-inner { fill: color-mix(in srgb, var(--paper) 58%, #171715); }
+.face-side-outer { fill: color-mix(in srgb, var(--paper) 76%, #171715); }
+.face-bulb { fill: #20211e; stroke: #555047; stroke-width: 2; }
+.lamp-bezel { fill: #0e1110; stroke: #777669; stroke-width: 2; }
+.lamp-ring { fill: none; stroke: #fff1c4; stroke-opacity: .48; stroke-width: .8; }
+.lamp-flutes { fill: none; stroke: #684e2d; stroke-opacity: .24; stroke-width: .9; }
+.lamp-highlight { fill: none; stroke: #fffdf2; stroke-opacity: .78; stroke-width: 1.7; stroke-linecap: round; }
+
+/* aura layer: above the drawing, below the copy — the glow lights the
+   page without washing over the type */
+.glow-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* interactive layer: same box as the car, above the text, clicks land here */
+.lamp-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.lamp-frame {
+  position: absolute;
+  left: 50%;
+  top: calc((100vh + var(--head-h, 72px)) / 2);
+  transform: translate(-50%, -38%);
+  width: max(880px, 124vw);
+  aspect-ratio: 1200 / 720;
+}
+
+/* aura: a radial gradient that lives on the interactive layer, so the
+   centre mask on the drawing cannot dim it. Screen blend keeps it light. */
+.lamp-glow {
+  position: absolute;
+  width: 18%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.86);
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 50% 50%,
+      color-mix(in srgb, var(--signal) 72%, white 10%) 0%,
+      color-mix(in srgb, var(--signal) 38%, transparent) 30%,
+      color-mix(in srgb, var(--signal) 10%, transparent) 52%,
+      transparent 72%);
+  filter: blur(7px) saturate(1.1);
+  mix-blend-mode: screen;
+  will-change: opacity, transform;
+}
+
+.lamp-glow::after {
+  content: "";
+  position: absolute;
+  inset: 31%;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    color-mix(in srgb, var(--signal) 80%, white 12%) 0%,
+    color-mix(in srgb, var(--signal) 45%, transparent) 55%,
+    transparent 78%);
+  filter: blur(3px);
+}
+
+.lamp-glow-l {
+  left: 25.167%;
+  top: 50.21%;
+}
+
+.lamp-glow-r {
+  left: 74.833%;
+  top: 50.21%;
+}
+
+[data-theme="night"] .lamp-glow {
+  opacity: 0.62;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.lamp-hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 12%;
+  height: 16%;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  border-radius: 999px;
+}
+
+.lamp-hotspot-l {
+  left: 25.167%;
+  top: 50.21%;
+}
+
+.lamp-hotspot-r {
+  left: 74.833%;
+  top: 50.21%;
+}
+
+.lamp-hotspot:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+/* The emissive surface shares the existing Konami flash. */
+.bg-car.flash .lamp-emission {
+  animation: lamp-glow-flash 480ms var(--ease);
+}
+
+@keyframes lamp-glow-flash {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: .2; }
+}
+
+@media (max-width: 760px) {
+  .car-frame,
+  .lamp-frame {
+    /* Keep both projected lamps and their touch targets inside the viewport. */
+    width: 150vw;
+  }
+
+  .car-frame > .car-svg {
+    opacity: 0.4;
+  }
+}
+
+/* ---------- Hero (centered page-head) ---------- */
+
+.hero {
+  padding: var(--s12) 0 var(--s8);
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: clamp(58px, 9vw, 110px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.hero .lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s1);
+}
+
+.hero .h-sub {
+  font-family: var(--font-display);
+  font-weight: 400;
+  color: var(--ink);
+  font-size: clamp(24px, 3.4vw, 40px);
+  letter-spacing: 0.02em;
+}
+
+.hero .zh-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+  font-size: clamp(64px, 11vw, 140px);
+  line-height: 1.05;
+  margin: 0;
+}
+
+.hero .statement {
+  font-size: clamp(26px, 3.5vw, 37px);
+  font-family: var(--font-display);
+  font-weight: 400;
+  max-width: 26ch;
+  margin: var(--s3) auto var(--s2);
+}
+
+.hero .coords {
+  color: var(--ink-soft);
+  font-size: 17px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin: 0;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  html.js .slab {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .bg-car.flash .lamp-emission { animation: none; }
+
+  .noisy,
+  .noisy-h {
+    filter: none;
+  }
+
+  body,
+  .face-lid,
+  .lid-ink {
+    transition: none;
+  }
+}
+
+/* ---------- Small screens: slabs become full-bleed bands ---------- */
+
+@media (max-width: 760px) {
+  .slab {
+    margin-left: calc(-1 * var(--gutter));
+    margin-right: calc(-1 * var(--gutter));
+    padding: var(--s3) var(--gutter);
+  }
+
+  .slab--cant-left,
+  .slab--cant-right {
+    /* cantilever reads as a left-edge offset band on mobile */
+    margin-left: calc(-1 * var(--gutter));
+    margin-right: 0;
+    border-left: 2px solid var(--ink);
+  }
+
+  .grid {
+    gap: var(--s2);
+  }
+}

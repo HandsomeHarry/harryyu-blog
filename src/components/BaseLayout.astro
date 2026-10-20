@@ -1,0 +1,453 @@
+---
+import "@fontsource/tinos/400.css";
+import "@fontsource/tinos/400-italic.css";
+import "@fontsource/tinos/700.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
+// Chinese name glyphs: Noto Sans SC subset to 于士一 only (3 glyphs)
+// — public/fonts/name-zh.woff2, @font-face in global.css.
+import "../styles/global.css";
+import "../styles/components.css";
+import BackgroundCar from "./BackgroundCar.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  prev?: string;
+  next?: string;
+}
+
+const {
+  title,
+  description = "Shiyi Yu — I make things you can see into.",
+  prev = "",
+  next = "",
+  noindex = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="generator" content={false} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script is:inline>
+      // Theme init — before paint, no flash. Choice persists; system is default.
+      (function () {
+        try {
+          var t = localStorage.getItem("headlights");
+          if (t === "day" || t === "night") {
+            document.documentElement.dataset.theme = t;
+          }
+        } catch (e) {
+          /* private mode: ride with system preference */
+        }
+        document.documentElement.classList.add("js");
+      })();
+    </script>
+  </head>
+  <body
+    data-sections="work,making,play,garage,about"
+    data-prev={prev}
+    data-next={next}
+  >
+    <a class="skip" href="#main">Skip to content</a>
+
+    <!-- Print-noise filters (softlabor-style): static fractal displacement
+         over type; hover snaps to crisp via CSS filter swap. -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <filter id="noise-content" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="B" />
+      </filter>
+      <filter id="noise-heading" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="32" xChannelSelector="R" yChannelSelector="B" />
+      </filter>
+    </svg>
+
+    <header class="masthead">
+      <nav class="wrap masthead-inner" aria-label="Site">
+        <div class="masthead-brand">
+          <a class="wordmark noisy-h" href="/">Harry Yu</a>
+          <ul class="nav">
+            <li><a class="noisy" href="/#about">About</a></li>
+            <li><a class="noisy" href="/#work">Work</a></li>
+            <li><a class="noisy" href="/#making">Making</a></li>
+            <li><a class="noisy" href="/#play">Play</a></li>
+            <li><a class="noisy" href="/garage">Garage</a></li>
+            <li><a class="noisy" href="/Resume_HarryYu.pdf" download>Résumé</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main" class="wrap">
+      <slot />
+    </main>
+
+    <!-- one 944, fixed as the page backdrop -->
+    <BackgroundCar />
+
+    <!-- Hotkey HUD + help overlay -->
+    <aside class="hotkey-hud" aria-label="Keyboard shortcuts">
+      <kbd>1</kbd>–<kbd>5</kbd> sections · <kbd>J</kbd>/<kbd>K</kbd> projects ·
+      <kbd>H</kbd> lights · <kbd>?</kbd> help
+    </aside>
+
+    <div class="help-overlay" id="help" hidden>
+      <div class="help-card" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+        <p class="label">Controls</p>
+        <table>
+          <tbody>
+            <tr><td>1 – 5</td><td>Jump to Work, Making, Play, Garage, About</td></tr>
+            <tr><td>J / K</td><td>Next / previous project</td></tr>
+            <tr><td>H</td><td>Toggle headlights (dark mode)</td></tr>
+            <tr><td>?</td><td>Open / close this overlay</td></tr>
+            <tr><td>Esc</td><td>Close this overlay</td></tr>
+          </tbody>
+        </table>
+        <p class="mono" style="margin: var(--s2) 0 0; color: var(--ink-soft)">
+          Hotkeys sleep while you type in a field.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      import { initHeadlights } from "../lib/headlights";
+      // ---- site island: hotkeys, help overlay, scroll reveal, konami ----
+      // Vanilla, no dependencies. Everything here degrades gracefully;
+      // the site is fully usable if this never runs.
+      const doc = document.documentElement;
+
+      // -- scroll reveal --
+      const slabs = Array.from(document.querySelectorAll(".slab"));
+      function revealVisible() {
+        const vh = window.innerHeight;
+        for (const s of slabs) {
+          if (s.classList.contains("in")) continue;
+          if (s.getBoundingClientRect().top < vh * 0.92) {
+            s.classList.add("in");
+          }
+        }
+      }
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add("in");
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { rootMargin: "0px 0px -10% 0px" }
+        );
+        slabs.forEach((s) => io.observe(s));
+      }
+      // Fallback (and belt-and-suspenders): reveal on scroll position.
+      // Covers environments where IO callbacks never fire, plus scroll restoration.
+      addEventListener("scroll", revealVisible, { passive: true });
+      revealVisible();
+
+      // -- layout: publish the masthead rule height for the background car --
+      const masthead = document.querySelector(".masthead");
+      function syncHeadHeight() {
+        if (masthead) {
+          document.documentElement.style.setProperty(
+            "--head-h",
+            `${(masthead as HTMLElement).offsetHeight}px`
+          );
+        }
+      }
+      syncHeadHeight();
+      addEventListener("resize", syncHeadHeight, { passive: true });
+
+      // -- print noise, scaled to font size (softlabor reference) --
+      // Each .noisy / .noisy-h element gets its own SVG filter with
+      // displacement ≈ 0.9x font size (1.15x for headings), a random
+      // turbulence seed and a slow base-frequency drift (0.9 -> 0.95 over
+      // 300s). Hover resolves the type to crisp over 1500ms; leaving
+      // re-noises over 750ms. Same cubic-bezier feel as the reference.
+      const reducedMotion = matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      const smallScreen = matchMedia("(max-width: 760px)").matches;
+      const defsHost = document.querySelector(
+        "svg[aria-hidden='true']"
+      ) as SVGSVGElement | null;
+
+      if (!reducedMotion && !smallScreen && defsHost) {
+        const SVGNS = "http://www.w3.org/2000/svg";
+        const FOCUS_MS = 1500;
+        const DENOISE_MS = 750;
+        const DRIFT = 0.05; // base-frequency drift over 300s
+        // cubic-bezier(0.1, 0.8, 0.2, 1) — the reference spline
+        const BEZ = [0.1, 0.8, 0.2, 1];
+        function bezier(t: number, p: number[]): number {
+          const [x1, y1, x2, y2] = p;
+          const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
+          const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+          const fx = (u: number) => ((ax * u + bx) * u + cx) * u;
+          const dfx = (u: number) => (3 * ax * u + 2 * bx) * u + cx;
+          let u = t;
+          for (let i = 0; i < 6; i++) {
+            const x = fx(u) - t;
+            if (Math.abs(x) < 1e-5) break;
+            const d = dfx(u);
+            if (Math.abs(d) < 1e-6) break;
+            u -= x / d;
+          }
+          return ((ay * u + by) * u + cy) * u;
+        }
+
+        let uid = 0;
+        const usedSeeds = new Set<number>();
+        function nextSeed(): number {
+          let s = 1 + Math.floor(Math.random() * 999);
+          while (usedSeeds.has(s)) s = 1 + ((s + 1) % 999);
+          usedSeeds.add(s);
+          return s;
+        }
+
+        // one record per noisy element: filter parts + foveation state
+        type NoiseRec = {
+          el: HTMLElement;
+          disp: SVGElement;
+          base: number;
+          timer: number;
+          hovered: boolean;
+        };
+        const recs: NoiseRec[] = [];
+        const drifts: { turb: SVGElement; base: number }[] = [];
+        const born = performance.now();
+
+        // Steam-Frame foveation: the middle of the viewport renders nearly
+        // clear (15% residual), noise returns toward the edges.
+        function foveaTarget(rec: NoiseRec): number {
+          const vh = window.innerHeight;
+          const r = rec.el.getBoundingClientRect();
+          if (r.bottom < -vh || r.top > 2 * vh) return rec.base;
+          const center = r.top + r.height / 2;
+          const d = Math.max(0, Math.min(1, Math.abs(center - vh / 2) / (vh / 2)));
+          return Math.round(rec.base * (0.15 + 0.85 * Math.pow(d, 1.5)));
+        }
+        function applyFovea() {
+          for (const rec of recs) {
+            if (rec.hovered) continue;
+            const target = foveaTarget(rec);
+            const cur = Number(rec.disp.getAttribute("scale"));
+            if (Math.abs(cur - target) >= 2) {
+              clearTimeout(rec.timer);
+              rec.disp.setAttribute("scale", String(target));
+            }
+          }
+        }
+
+        function wireNoise() {
+          // everything typographic: headings, labels, and all prose
+          const els = Array.from(
+            document.querySelectorAll<HTMLElement>(
+              [
+                ".noisy",
+                ".noisy-h",
+                ".spec-card .summary",
+                ".spec-card .parts",
+                ".project-body > p",
+                ".project-body > ul",
+                ".project-body > ol",
+                ".changelog-item .summary",
+                ".about-cols p",
+                ".hero .statement",
+                ".footer .statement",
+              ].join(", ")
+            )
+          );
+          const seen = new Set<HTMLElement>();
+          for (const el of els) {
+            if (seen.has(el)) continue;
+            seen.add(el);
+            const fs = parseFloat(getComputedStyle(el).fontSize);
+            if (!fs) continue;
+            const heading = el.classList.contains("noisy-h");
+            const prose =
+              !heading &&
+              (el.tagName === "P" || el.tagName === "UL" || el.tagName === "OL" ||
+                el.classList.contains("summary") ||
+                el.classList.contains("statement"));
+            const factor = heading ? 1.15 : prose ? 0.7 : 0.9;
+            const scale = Math.max(4, Math.round(fs * factor));
+            const base = 0.88 + Math.random() * 0.04; // per-element jitter
+            const seed = nextSeed();
+
+            const filter = document.createElementNS(SVGNS, "filter");
+            filter.id = `noise-el-${uid++}`;
+            filter.setAttribute("x", "0%");
+            filter.setAttribute("y", "0%");
+            filter.setAttribute("width", "100%");
+            filter.setAttribute("height", "100%");
+            const turb = document.createElementNS(SVGNS, "feTurbulence");
+            turb.setAttribute("type", "fractalNoise");
+            turb.setAttribute("baseFrequency", String(base));
+            turb.setAttribute("numOctaves", "1");
+            turb.setAttribute("seed", String(seed));
+            turb.setAttribute("result", "noise");
+            const disp = document.createElementNS(SVGNS, "feDisplacementMap");
+            disp.setAttribute("in", "SourceGraphic");
+            disp.setAttribute("in2", "noise");
+            disp.setAttribute("scale", String(scale));
+            disp.setAttribute("xChannelSelector", "R");
+            disp.setAttribute("yChannelSelector", "B");
+            filter.append(turb, disp);
+            defsHost.append(filter);
+            drifts.push({ turb, base });
+
+            el.style.filter = `url(#${filter.id})`;
+
+            const rec: NoiseRec = { el, disp, base: scale, timer: 0, hovered: false };
+            recs.push(rec);
+
+            // tween displacement scale: crisp on enter, fovea-aware on leave
+            const tween = (to: number, dur: number) => {
+              clearTimeout(rec.timer);
+              const from = Number(disp.getAttribute("scale"));
+              const t0 = performance.now();
+              const step = () => {
+                const p = Math.min(1, (performance.now() - t0) / dur);
+                const e = bezier(p, BEZ);
+                disp.setAttribute("scale", String(from + (to - from) * e));
+                if (p < 1) rec.timer = window.setTimeout(step, 16);
+              };
+              step();
+            };
+            const toCrisp = () => {
+              rec.hovered = true;
+              tween(0, FOCUS_MS);
+            };
+            const toNoise = () => {
+              rec.hovered = false;
+              tween(foveaTarget(rec), DENOISE_MS);
+            };
+            el.addEventListener("mouseenter", toCrisp);
+            el.addEventListener("mouseleave", toNoise);
+            el.addEventListener("focus", toCrisp);
+            el.addEventListener("blur", toNoise);
+          }
+
+          applyFovea(); // initial pass: whatever sits mid-viewport starts clear
+          addEventListener("scroll", applyFovea, { passive: true });
+          addEventListener("resize", applyFovea, { passive: true });
+
+          // slow drift: baseFrequency 0.9 -> 0.95 over 300s, never loops
+          window.setInterval(
+            () => {
+              const f = Math.min(1, (performance.now() - born) / 300000);
+              for (const d of drifts) {
+                d.turb.setAttribute(
+                  "baseFrequency",
+                  (d.base + DRIFT * f).toFixed(4)
+                );
+              }
+            },
+            4000
+          );
+        }
+
+        if (document.fonts?.ready) {
+          document.fonts.ready.then(() => wireNoise());
+        } else {
+          wireNoise();
+        }
+      }
+
+      // Rigid headlight meshes, illumination, theme persistence and motion.
+      const { currentTheme, setTheme } = initHeadlights();
+
+      // -- help overlay --
+      const help = document.getElementById("help")!;
+      function toggleHelp(force?: boolean) {
+        const show = force ?? help.hidden;
+        help.hidden = !show;
+        if (show) (help.querySelector("td") as HTMLElement)?.focus?.();
+      }
+      help.addEventListener("click", (e) => {
+        if (e.target === help) toggleHelp(false);
+      });
+
+      // -- hotkeys --
+      const body = document.body;
+      const sectionIds = (body.dataset.sections || "").split(",").filter(Boolean);
+      document.addEventListener("keydown", (e) => {
+        const target = e.target as HTMLElement;
+        const typing =
+          target.closest("input, textarea, select, [contenteditable]") !== null;
+        if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
+
+        if (e.key === "Escape") {
+          if (!help.hidden) toggleHelp(false);
+          return;
+        }
+        if (e.key === "?" || (e.key === "/" && e.shiftKey)) {
+          e.preventDefault();
+          toggleHelp();
+          return;
+        }
+        if (e.key === "h" || e.key === "H") {
+          setTheme(currentTheme() === "night" ? "day" : "night");
+          return;
+        }
+        if (/^[1-5]$/.test(e.key)) {
+          const id = sectionIds[Number(e.key) - 1];
+          const el = id && document.getElementById(id);
+          if (el) {
+            e.preventDefault();
+            el.scrollIntoView({ behavior: "smooth" });
+          }
+          return;
+        }
+        if (e.key === "j" || e.key === "J") {
+          const href = body.dataset.next;
+          if (href) location.href = href;
+          return;
+        }
+        if (e.key === "k" || e.key === "K") {
+          const href = body.dataset.prev;
+          if (href) location.href = href;
+          return;
+        }
+      });
+
+      // -- konami: flash headlights twice, reveal /pit --
+      const konami = [
+        "ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown",
+        "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight",
+        "b", "a",
+      ];
+      let ki = 0;
+      document.addEventListener("keydown", (e) => {
+        const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+        ki = key === konami[ki] ? ki + 1 : key === konami[0] ? 1 : 0;
+        if (ki !== konami.length) return;
+        ki = 0;
+        const pair = document.getElementById("lights");
+        if (pair) {
+          pair.classList.remove("flash");
+          void pair.offsetWidth; // restart animation
+          pair.classList.add("flash");
+        }
+        const pit = document.createElement("a");
+        pit.href = "/pit";
+        pit.textContent = "/pit";
+        pit.className = "mono";
+        pit.style.cssText =
+          "position:fixed;right:16px;bottom:16px;z-index:99;color:var(--cherokee)";
+        document.body.appendChild(pit);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,238 @@
+/* ---------- Feed (softlabor register): borderless cards ---------- */
+
+.feed {
+  display: block;
+}
+
+.feed-group {
+  border-top: 1px solid var(--ink);
+  padding-top: var(--s3);
+  margin-top: var(--s12);
+}
+
+.postfeed {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+  gap: var(--s8) var(--s3);
+}
+
+/* first card of each group claims the full row, like their lead card */
+.postfeed > :first-child {
+  grid-column: 1 / -1;
+}
+
+.spec-card {
+  background: none;
+  border: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+  text-align: center;
+}
+
+.spec-card .summary {
+  margin: 0;
+  flex-grow: 1;
+  text-align: left;
+}
+
+.spec-card .parts {
+  color: var(--ink-soft);
+  margin: 0;
+  text-align: center;
+}
+
+.spec-card h3 {
+  font-size: 31px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.spec-card h3 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.spec-card h3 a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.garage-card h3 {
+  font-size: 25px;
+}
+
+.about-block {
+  max-width: 62ch;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about-block p {
+  text-align: left;
+}
+
+.about-block .mono {
+  text-align: center;
+}
+
+/* ---------- Changelog (garage) ---------- */
+
+.changelog {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.changelog-item {
+  border-bottom: 1px solid var(--hairline);
+  padding: var(--s2) 0;
+}
+
+.changelog-item:last-child {
+  border-bottom: 0;
+}
+
+.changelog-meta {
+  display: flex;
+  gap: var(--s3);
+  flex-wrap: wrap;
+  color: var(--ink-soft);
+  margin: 0 0 var(--s1);
+}
+
+.changelog-item h3 {
+  font-size: 25px;
+  margin: 0 0 var(--s1);
+}
+
+.changelog-item .summary {
+  margin: 0;
+  max-width: 70ch;
+}
+
+/* ---------- Project pages (technical-drawing format) ---------- */
+
+.project h1 {
+  font-size: clamp(44px, 6.6vw, 74px);
+  margin-bottom: var(--s2);
+}
+
+.project-summary {
+  font-family: var(--font-display);
+  font-size: clamp(25px, 2.9vw, 31px);
+  max-width: 40ch;
+  margin-bottom: var(--s3);
+}
+
+.spec-block {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--s2);
+  margin: var(--s3) 0 0;
+  border-top: 1px solid var(--hairline);
+  padding-top: var(--s2);
+}
+
+.spec-block div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.spec-block .spec-wide {
+  grid-column: 1 / -1;
+}
+
+.spec-block dt {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.spec-block dd {
+  margin: 0;
+}
+
+.project-body {
+  max-width: 72ch;
+  margin: var(--s6) 0;
+}
+
+.project-body h2 {
+  font-size: 31px;
+  margin-top: var(--s6);
+  padding-top: var(--s2);
+  border-top: 1px solid var(--hairline);
+}
+
+.project-body table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 16px;
+}
+
+.project-body th,
+.project-body td {
+  border: 1px solid var(--hairline);
+  padding: var(--s1) var(--s2);
+  text-align: left;
+}
+
+.project-body th {
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.project-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s2);
+  border-top: 1px solid var(--hairline);
+  padding-top: var(--s2);
+  flex-wrap: wrap;
+}
+
+/* ---------- Callouts (annotated images) ---------- */
+
+.callout {
+  display: flex;
+  gap: var(--s2);
+  align-items: flex-start;
+  border-left: 2px solid var(--concrete);
+  padding-left: var(--s2);
+  margin: var(--s3) 0;
+}
+
+.callout-n {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ---------- About ---------- */
+
+.about-cols {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--s4);
+}
+
+@media (max-width: 760px) {
+  .about-cols {
+    grid-template-columns: 1fr;
+  }
+}

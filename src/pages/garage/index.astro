@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import Slab from "../../components/Slab.astro";
+import { getCollection } from "astro:content";
+
+const entries = (await getCollection("garage")).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout
+  title="Garage — Shiyi Yu"
+  description="Build log for a 1983 Porsche 944 maintained by its owner."
+>
+  <div class="grid">
+    <Slab id="garage" label="04" title="Garage">
+      <p style="max-width:60ch">
+        A 1983 Porsche 944, maintained in a driveway. Every entry lists parts,
+        cost where known, and an honest difficulty rating.
+      </p>
+      <ol class="changelog">
+        {
+          entries.map((e) => (
+            <li class="changelog-item">
+              <p class="mono changelog-meta">
+                <span>{e.data.date.toISOString().slice(0, 10)}</span>
+                {e.data.mileage && (
+                  <span>{e.data.mileage.toLocaleString("en-US")} mi</span>
+                )}
+                <span>{"▮".repeat(e.data.difficulty)}{"▯".repeat(5 - e.data.difficulty)}</span>
+                <span>{e.data.status}</span>
+              </p>
+              <h3>
+                <a href={`/garage/${e.id}`}>{e.data.title}</a>
+              </h3>
+              <p class="summary">{e.data.summary}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </Slab>
+  </div>
+</BaseLayout>

@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const projects = (await getCollection("projects")).sort(
+    (a, b) => a.data.order - b.data.order
+  );
+  return projects.map((entry, i) => ({
+    params: { slug: entry.data.slug },
+    props: {
+      entry,
+      prev: projects[i - 1] ?? projects[projects.length - 1],
+      next: projects[i + 1] ?? projects[0],
+    },
+  }));
+}
+
+const { entry, prev, next } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+---
+
+<BaseLayout
+  title={`${d.title} — Shiyi Yu`}
+  description={d.summary}
+  prev={`/work/${prev.data.slug}`}
+  next={`/work/${next.data.slug}`}
+>
+  <article class="project">
+    <header class="slab slab--cant-left">
+      <p class="label">{d.category} / {d.year} / {d.status}</p>
+      <h1>{d.title}</h1>
+      <p class="project-summary">{d.summary}</p>
+      <dl class="mono spec-block">
+        <div><dt>Role</dt><dd>{d.role}</dd></div>
+        <div><dt>Year</dt><dd>{d.year}</dd></div>
+        <div><dt>Stack / Materials</dt><dd>{d.stack.join(", ")}</dd></div>
+        <div><dt>Status</dt><dd>{d.status}</dd></div>
+        {
+          d.links.length > 0 && (
+            <div>
+              <dt>Links</dt>
+              <dd>
+                {d.links.map((l) => (
+                  <a href={l.url} rel="noopener">{l.label}</a>
+                ))}
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+    </header>
+
+    <div class="project-body">
+      <Content />
+    </div>
+
+    <nav class="project-nav mono" aria-label="Project navigation">
+      <a href={`/work/${prev.data.slug}`}>← K / prev: {prev.data.title}</a>
+      <a href={`/work/${next.data.slug}`}>J / next: {next.data.title} →</a>
+    </nav>
+  </article>
+</BaseLayout>

@@ -1,0 +1,98 @@
+---
+import BaseLayout from "../components/BaseLayout.astro";
+import SpecCard from "../components/SpecCard.astro";
+import { getCollection } from "astro:content";
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order
+);
+const byCat = (c: "work" | "making" | "play") =>
+  projects.filter((p) => p.data.category === c);
+const work = byCat("work");
+const making = byCat("making");
+const play = byCat("play");
+const garage = (await getCollection("garage"))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+const groups = [
+  { id: "work", label: "01 / Work", items: work },
+  { id: "making", label: "02 / Making", items: making },
+  { id: "play", label: "03 / Play", items: play },
+];
+---
+
+<BaseLayout
+  title="于士一 Harry Yu — I make things you can see into"
+  description="于士一 (Harry Yu). Entertainment Technology @ CMU, CS @ Brandeis. Maker, game developer, keeper of a 1983 Porsche 944."
+>
+  <!-- the page defaults to about: 于士一 primary, Harry Yu under it -->
+  <section id="about" class="hero" aria-labelledby="hero-name">
+    <div class="lockup">
+      <h1 class="zh-name noisy-h" id="hero-name" lang="zh">于士一</h1>
+      <p class="h-sub noisy">Harry Yu</p>
+    </div>
+    <p class="statement noisy">I make things you can see into.</p>
+    <p class="coords mono">
+      Entertainment Technology @ CMU · CS @ Brandeis · Pittsburgh
+    </p>
+
+    <div class="about-block">
+      <p>
+        CS at Brandeis, now at Carnegie Mellon's Entertainment Technology
+        Center. I build games, tools, hardware, and one very stubborn 1983
+        Porsche 944.
+      </p>
+      <p>
+        The through-line: things that show their structure. Software you
+        can inspect, hardware you can open, a car you can wrench on.
+        That's the standard for this site too — no tracking, no cookies,
+        and every page works with JavaScript switched off.
+      </p>
+      <!-- TODO: replace with the copy you want here -->
+      <p class="mono">
+        <a href="mailto:harryyu2002@gmail.com">harryyu2002@gmail.com</a>
+      </p>
+      <p class="mono now">
+        TODO: what I'm currently building, playing, and wrenching on.
+      </p>
+    </div>
+  </section>
+
+  <div class="feed">
+    {
+      groups.map((g) => (
+        <section id={g.id} class="feed-group" aria-labelledby={`${g.id}-label`}>
+          <h2 class="label" id={`${g.id}-label`}>
+            {g.label}
+          </h2>
+          <div class="postfeed">
+            {g.items.map((p) => (
+              <SpecCard project={p} />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+
+    <section id="garage" class="feed-group" aria-labelledby="garage-label">
+      <h2 class="label" id="garage-label">04 / Garage</h2>
+      <div class="postfeed">
+        {
+          garage.map((e) => (
+            <article class="spec-card garage-card">
+              <p class="label">{e.data.date.toISOString().slice(0, 10)}</p>
+              <h3 class="noisy">
+                <a href={`/garage/${e.id}`}>{e.data.title}</a>
+              </h3>
+              <p class="summary">{e.data.summary}</p>
+            </article>
+          ))
+        }
+        <article class="spec-card garage-card">
+          <p class="label">full log</p>
+          <h3><a href="/garage">Every entry →</a></h3>
+        </article>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

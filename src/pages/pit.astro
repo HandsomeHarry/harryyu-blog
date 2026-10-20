@@ -1,0 +1,56 @@
+---
+// /pit — the easter egg. Reached via the Konami code.
+// Not linked anywhere; only the Konami code reveals it.
+import BaseLayout from "../components/BaseLayout.astro";
+---
+
+<BaseLayout title="The pit — Shiyi Yu" description="Behind the scenes of harryyu.dev." noindex>
+  <div class="grid">
+    <section class="slab slab--cant-left" aria-labelledby="pit-h">
+      <p class="label">/pit · unlisted</p>
+      <div class="slab-header">
+        <h2 id="pit-h">You found the pit lane.</h2>
+      </div>
+      <div class="project-body" style="margin:0; max-width:none">
+        <p>
+          Behind-the-scenes build log for this site. The short version:
+          a spec document, four phases, and a lot of staring at grid lines.
+        </p>
+
+        <h2>Decisions worth knowing</h2>
+        <ul>
+          <li>
+            Scroll reveals hide content only after JavaScript proves it's
+            running — the page is fully readable with JS off, by construction.
+          </li>
+          <li>
+            The theme toggle is a pair of 944 pop-up headlights because the
+            car has them and dark mode is driving at night. Light mode:
+            retracted. Dark mode: up and lit.
+          </li>
+          <li>
+            The hotkeys sleep while you type in a field, and they never take
+            modifiers, so browser and screen reader shortcuts stay theirs.
+          </li>
+          <li>
+            The type runs through SVG fractal-noise displacement filters
+            (after softlabor.biz), each scaled to its own font size. The
+            page is foveated like a head-mounted stream: mid-viewport is
+            nearly clear, edges stay noisy, scroll and hover refocus. It
+            switches off entirely on small screens and under reduced motion.
+            softlabor collects body paragraphs for noise but never wires
+            them — dead code in their shipped bundle. Ours is wired.
+          </li>
+        </ul>
+
+        <h2>The flashing lights</h2>
+        <p>
+          You already know the code, or you wouldn't be here. The headlights
+          flash twice and this page appears. That's the whole trick.
+        </p>
+        <!-- TODO: keep appending build notes here as the site evolves -->
+        <p class="mono"><a href="/">Back to the road →</a></p>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

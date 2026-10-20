@@ -1,0 +1,153 @@
+---
+import { headlightFrame, pathData } from "../lib/headlight-geometry.mjs";
+// The body keeps the original contour drawing. Headlights are rigid meshes
+// in a separate, unmasked SVG so opaque faces really occlude one another.
+const sides = [-1, 1];
+---
+
+<div class="bg-car" id="lights" role="group" aria-label="Headlights — toggle lights (dark mode)">
+  <div class="car-frame">
+    <svg class="car-svg" viewBox="0 0 1200 720" fill="none" aria-hidden="true">
+      <title>Porsche 944 — front light study</title>
+      <defs>
+        <linearGradient id="bg-fade" x1="0" y1="400" x2="0" y2="130" gradientUnits="userSpaceOnUse">
+          <stop stop-color="white" />
+          <stop offset=".38" stop-color="white" stop-opacity=".75" />
+          <stop offset="1" stop-color="white" stop-opacity="0" />
+        </linearGradient>
+        <mask id="bg-recede"><rect width="1200" height="720" fill="url(#bg-fade)" /></mask>
+        <filter id="bg-soft" x="-20%" y="-30%" width="140%" height="160%">
+          <feGaussianBlur stdDeviation="3.8" />
+        </filter>
+        <filter id="bg-haze" x="-20%" y="-50%" width="140%" height="200%">
+          <feGaussianBlur stdDeviation="7" />
+        </filter>
+      </defs>
+
+      <!-- Distant windshield: a quiet, dissolved suggestion. -->
+      <g class="linework" stroke="currentColor" stroke-linecap="round" filter="url(#bg-haze)" opacity=".17">
+        <path d="M303 236L367 142Q600 115 833 142L897 236" stroke-width="3" />
+        <path d="M337 228L387 157Q600 138 813 157L863 228" stroke-width="2" />
+        <path d="M320 239Q600 260 880 239" stroke-width="3" />
+      </g>
+
+      <!-- Curves become thinner and softer as they travel back. -->
+      <g mask="url(#bg-recede)" fill="currentColor">
+        <g filter="url(#bg-soft)" opacity=".55">
+          <path d="M174 373Q176 294 268 257Q309 241 342 236Q290 249 258 266Q186 309 174 373Z" />
+          <path d="M1026 373Q1024 294 932 257Q891 241 858 236Q910 249 942 266Q1014 309 1026 373Z" />
+          <path d="M228 364Q232 285 321 239Q240 291 233 364Z" />
+          <path d="M972 364Q968 285 879 239Q960 291 967 364Z" />
+          <path d="M375 354Q390 288 416 255L379 354Z" />
+          <path d="M825 354Q810 288 784 255L821 354Z" />
+          <path d="M307 253Q600 284 893 253Q600 292 307 253Z" />
+        </g>
+        <path d="M174 402Q169 355 188 318Q174 363 180 401Z" />
+        <path d="M1026 402Q1031 355 1012 318Q1026 363 1020 401Z" />
+        <path d="M228 395Q224 336 248 299Q232 342 234 395Z" />
+        <path d="M972 395Q976 336 952 299Q968 342 966 395Z" />
+      </g>
+
+      <!-- Covers first: they stay on the car and only foreshorten. -->
+      <g fill="currentColor">
+        <path d="M374 348Q600 339 826 348Q600 344 374 348Z" opacity=".55" />
+        <!-- Fender shoulders flow into the bumper. -->
+        <path d="M174 368Q158 403 162 446L173 505Q177 520 198 526Q177 525 169 510L156 448Q151 407 174 368Z" />
+        <path d="M1026 368Q1042 403 1038 446L1027 505Q1023 520 1002 526Q1023 525 1031 510L1044 448Q1049 407 1026 368Z" />
+        <!-- Main bumper rail, subtly heavier through its underside. -->
+        <path d="M194 425Q600 440 1006 425Q1027 424 1026 440L1023 452Q600 469 177 452L174 440Q173 424 194 425ZM194 429Q178 428 179 440L181 448Q600 461 1019 448L1021 440Q1022 428 1006 429Q600 443 194 429Z" />
+        <!-- Lamp pockets. -->
+        <path d="M181 458L362 463L361 510L195 507Q181 506 181 493ZM187 464L187 493Q187 501 196 501L355 504L356 469Z" />
+        <path d="M1019 458L838 463L839 510L1005 507Q1019 506 1019 493ZM1013 464L1013 493Q1013 501 1004 501L845 504L844 469Z" />
+      </g>
+
+      <!-- Rectangular front lights; sparse lens detail keeps the drawing simple. -->
+      <g stroke="currentColor" stroke-linejoin="round">
+        <path d="M235 468L350 471L349 499L235 497Z M965 468L850 471L851 499L965 497Z" stroke-width="2.6" />
+        <path d="M229 466V500M971 466V500" stroke-width="3.5" />
+        <path d="M195 470L220 471V496L195 495Z M1005 470L980 471V496L1005 495Z" stroke-width="1.5" />
+        <path d="M251 474V493M269 475V494M287 475V494M305 476V495M323 476V495M877 476V495M895 476V495M913 475V494M931 475V494M949 474V493" stroke-width=".9" opacity=".55" />
+        <path d="M203 474V491M212 474V492M988 474V492M997 474V491" stroke-width=".9" opacity=".55" />
+      </g>
+
+      <!-- Unadorned center plate, bumper seams and lower intake. -->
+      <g fill="currentColor">
+        <path d="M437 464Q600 460 763 464L765 524Q600 530 435 524ZM442 469L441 519Q600 524 759 519L758 469Q600 465 442 469Z" />
+        <path d="M385 470L416 471L416 505L385 504ZM388 473V501L413 502V474Z M815 470L784 471L784 505L815 504ZM812 473V501L787 502V474Z" />
+        <path d="M189 511Q275 520 433 516L433 521Q279 525 189 511Z M1011 511Q925 520 767 516L767 521Q921 525 1011 511Z" />
+        <path d="M280 561Q278 544 300 543Q600 537 900 543Q922 544 920 561L917 568Q600 580 283 568ZM300 548Q286 549 286 560L288 563Q600 572 912 563L914 560Q914 549 900 548Q600 543 300 548Z" />
+        <path d="M438 545L443 565H437Z M600 544L603 568H597Z M762 545L763 565H757Z" />
+        <path d="M198 526Q187 556 202 577Q210 585 246 587Q600 608 954 587Q990 585 998 577Q1013 556 1002 526Q1018 557 1002 581Q993 591 955 593Q600 617 245 593Q207 591 198 581Q182 557 198 526Z" />
+      </g>
+    </svg>
+    <svg class="headlight-svg" viewBox="0 0 1200 720" fill="none" aria-hidden="true">
+      <defs>
+        <radialGradient id="lens-lit" cx="46%" cy="38%" r="65%">
+          <stop offset="0" stop-color="#fffdf4" />
+          <stop offset=".42" stop-color="#ffebbe" />
+          <stop offset=".78" stop-color="#ffc568" />
+          <stop offset="1" stop-color="#b86c24" />
+        </radialGradient>
+        <radialGradient id="lens-unlit" cx="40%" cy="30%" r="75%">
+          <stop stop-color="#8c8b7e" />
+          <stop offset=".5" stop-color="#4c514b" />
+          <stop offset="1" stop-color="#171c1b" />
+        </radialGradient>
+        <filter id="contact-soft" x="-30%" y="-150%" width="160%" height="400%">
+          <feGaussianBlur stdDeviation="3" />
+        </filter>
+      </defs>
+      {sides.map(side => {
+        const frame = headlightFrame(0, side);
+        const key = side < 0 ? "left" : "right";
+        return (
+          <g class="headlight-unit" data-side={side}>
+            <ellipse class="headlight-shadow" cx={side < 0 ? 302 : 898} cy="349" rx="74" ry="5" fill="#000" filter="url(#contact-soft)" opacity="0" />
+            <clipPath id={`bulb-clip-${key}`}><path class="bulb-clip" /></clipPath>
+            <g class="headlight-faces">
+              {frame.faces.map(face => <path data-face={face.name} class={`headlight-face face-${face.name}`} d={pathData(face.points)} />)}
+              <path class="lid-ink" d={pathData(frame.lidInk)} />
+              <g class="bulb-details" clip-path={`url(#bulb-clip-${key})`}>
+                <path class="lamp-bezel" />
+                <path class="lamp-glass" fill="url(#lens-unlit)" />
+                <path class="lamp-emission" fill="url(#lens-lit)" opacity="0" />
+                <path class="lamp-ring" />
+                <path class="lamp-flutes" />
+                <path class="lamp-highlight" />
+              </g>
+            </g>
+          </g>
+        );
+      })}
+    </svg>
+
+  </div>
+</div>
+
+<!-- click targets and lamp aura live in their own fixed layer above the
+     content, outside the masked drawing, so nothing dims the glow -->
+<div class="glow-layer" aria-hidden="true">
+  <div class="lamp-frame">
+    <div class="lamp-glow lamp-glow-l"></div>
+    <div class="lamp-glow lamp-glow-r"></div>
+  </div>
+</div>
+
+<div class="lamp-layer">
+  <div class="lamp-frame">
+    <button
+      class="lamp-hotspot lamp-hotspot-l"
+      type="button"
+      data-lamp="left"
+      aria-label="Left headlight: toggle lights"
+      aria-pressed="false"
+    ></button>
+    <button
+      class="lamp-hotspot lamp-hotspot-r"
+      type="button"
+      data-lamp="right"
+      aria-label="Right headlight: toggle lights"
+      aria-pressed="false"
+    ></button>
+  </div>
+</div>

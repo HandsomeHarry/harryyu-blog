@@ -1,0 +1,13 @@
+---
+// Numbered callout for annotated images: use inside MDX project pages.
+// <Figure> holds the image; <Callout n={1}> holds the note.
+interface Props {
+  n: number;
+}
+const { n } = Astro.props;
+---
+
+<aside class="callout">
+  <span class="callout-n" aria-hidden="true">{n}</span>
+  <div><slot /></div>
+</aside>

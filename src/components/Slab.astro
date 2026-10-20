@@ -1,0 +1,23 @@
+---
+// A cantilevered slab: the site's primary structural unit.
+// Extends past the grid edge on one side, sandstone top edge,
+// layered offset underneath — Fallingwater terraces, scaled down.
+interface Props {
+  id?: string;
+  label?: string;
+  title?: string;
+  side?: "left" | "right";
+}
+const { id, label, title, side = "left" } = Astro.props;
+const cantClass = side === "right" ? "slab--cant-right" : "slab--cant-left";
+const headingId = id ? `${id}-heading` : undefined;
+---
+
+<section class:list={["slab", cantClass]} id={id} aria-labelledby={headingId}>
+  <div class="slab-header">
+    {label && <p class="label noisy">{label}</p>}
+    {title && <h2 id={headingId} class="noisy-h">{title}</h2>}
+    <slot name="meta" />
+  </div>
+  <slot />
+</section>

@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../components/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = (await getCollection("garage")).sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  );
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const dateFmt = d.date.toISOString().slice(0, 10);
+---
+
+<BaseLayout title={`${d.title} — Garage — Shiyi Yu`} description={d.summary}>
+  <article class="garage-entry">
+    <header class="slab slab--cant-left">
+      <p class="label">garage log</p>
+      <h1>{d.title}</h1>
+      <dl class="mono spec-block">
+        <div><dt>Date</dt><dd>{dateFmt}</dd></div>
+        {d.mileage && <div><dt>Mileage</dt><dd>{d.mileage.toLocaleString("en-US")} mi</dd></div>}
+        <div><dt>Difficulty</dt><dd>{"▮".repeat(d.difficulty)}{"▯".repeat(5 - d.difficulty)} {d.difficulty}/5</dd></div>
+        <div><dt>Status</dt><dd>{d.status}</dd></div>
+        {d.cost && <div><dt>Cost</dt><dd>{d.cost}</dd></div>}
+        {d.parts.length > 0 && <div class="spec-wide"><dt>Parts</dt><dd>{d.parts.join(", ")}</dd></div>}
+      </dl>
+    </header>
+    <div class="project-body">
+      <Content />
+    </div>
+    <nav class="project-nav mono" aria-label="Garage navigation">
+      <a href="/garage">← all entries</a>
+    </nav>
+  </article>
+</BaseLayout>

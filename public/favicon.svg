@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- 944 pop-up headlight, retracted: hood line + flush lamp well -->
+  <rect width="32" height="32" fill="#131210"/>
+  <rect x="4" y="6" width="24" height="2" fill="#6E6960"/>
+  <rect x="8" y="12" width="7" height="8" fill="none" stroke="#E8A33D" stroke-width="2"/>
+  <rect x="17" y="12" width="7" height="8" fill="none" stroke="#E8A33D" stroke-width="2"/>
+  <rect x="4" y="26" width="24" height="2" fill="#6E6960"/>
+</svg>
