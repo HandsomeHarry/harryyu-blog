@@ -11,14 +11,15 @@ const FOCAL = 1800;
 const YAW = 4 * Math.PI / 180;
 // Inset the housing and glass together, leaving the original lid artwork
 // full-size as a small overhanging lip. The hood plane stays at y=0.
-const HOUSING_SCALE = .96;
+const HOUSING_SCALE = .92;
 const insetHousing = ([x,y,z]) => [x*HOUSING_SCALE,y*HOUSING_SCALE,
   SIDE/2+(z-SIDE/2)*HOUSING_SCALE];
 
 // Original left cover's outer SVG perimeter, including its asymmetric taper
 // and quadratic corners. Mirror the same artwork for the right assembly.
 function coverOutline(ink = false) {
-  const points = [[230,350]];
+  // The outer edge leans in 1.5px at the top to sit inside the fender line.
+  const points = [[231.5,350]];
   const line = (x,y) => points.push([x,y]);
   const quad = (cx,cy,x,y) => {
     const start = points[points.length-1];
@@ -31,11 +32,11 @@ function coverOutline(ink = false) {
   quad(290,343,374,348);
   if(ink) {
     // Original SVG filled contour, not a uniform-width stroke:
-    // M230 350 Q290 343 374 348 Q292 347 234 353 L235 394
+    // M231.5 350 Q290 343 374 348 Q292 347 235.5 353 L235 394
     // Q236 407 249 407 L340 407 Q352 407 356 394 L370 350
     // Q365 378 360 396 Q357 413 340 413 L248 412
     // Q230 412 230 395 Z
-    quad(292,347,234,353);
+    quad(292,347,235.5,353);
     line(235,394);
     quad(236,407,249,407);
     line(340,407);
@@ -148,6 +149,15 @@ export function headlightFrame(progress, side) {
     return {name:face.name, points, depth:cam.reduce((sum,p)=>sum+p[2],0)/cam.length, area};
   }).filter(face=>face.points.length>=3 && (face.name === 'lid' || Math.abs(face.area)>.001))
     .sort((a,b)=>a.depth-b.depth);
+  // Average depth misorders the lid against thin housing slivers just after
+  // opening. The housing lies wholly beneath the lid plane, so the lid is in
+  // front exactly while its top faces the camera, and behind once flipped.
+  // Mirroring the right unit reverses its winding, hence the side factor.
+  const lid = faces.findIndex(face=>face.name==='lid');
+  if(lid>=0) {
+    const [face] = faces.splice(lid,1);
+    if(face.area*-side>0) faces.push(face); else faces.unshift(face);
+  }
 
   // The glass follows the same loft as the shell. Its footprint remains
   // circular in face coordinates, rather than floating on the old box plane.

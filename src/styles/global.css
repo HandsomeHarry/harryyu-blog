@@ -508,13 +508,13 @@ html.js .slab.in {
 }
 
 /* sits centred in the band between the header rule and the page bottom,
-   then nudged down by 10% of its own height */
+   then nudged down by 14% of its own height */
 .car-frame {
   position: absolute;
   left: 50%;
   top: calc((100vh + var(--head-h, 72px)) / 2);
-  transform: translate(-50%, -38%);
-  width: max(880px, 124vw);
+  transform: translate(-50%, -36%);
+  width: max(960px, 136vw);
   perspective: 1200px;
 }
 
@@ -577,6 +577,7 @@ main,
   stroke-width: 1.4;
   stroke-linejoin: round;
   fill: var(--paper);
+  transition: fill var(--t-med) var(--ease), stroke var(--t-med) var(--ease);
 }
 
 .face-lid {
@@ -622,8 +623,8 @@ main,
   position: absolute;
   left: 50%;
   top: calc((100vh + var(--head-h, 72px)) / 2);
-  transform: translate(-50%, -38%);
-  width: max(880px, 124vw);
+  transform: translate(-50%, -36%);
+  width: max(960px, 136vw);
   aspect-ratio: 1200 / 720;
 }
 
@@ -717,7 +718,7 @@ main,
   .car-frame,
   .lamp-frame {
     /* Keep both projected lamps and their touch targets inside the viewport. */
-    width: 150vw;
+    width: 160vw;
   }
 
   .car-frame > .car-svg {
@@ -800,7 +801,7 @@ main,
   }
 
   body,
-  .face-lid,
+  .headlight-face,
   .lid-ink {
     transition: none;
   }

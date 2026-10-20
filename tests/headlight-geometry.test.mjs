@@ -47,7 +47,7 @@ test('closed bulb is below the hood; the opaque lid remains in every frame', () 
 
 test('closed cover follows the original SVG contour rather than a rectangle', () => {
   const points=headlightFrame(0,-1).faces.find(f=>f.name==='lid').points;
-  for(const [x,y] of [[230,350],[374,348],[340,413],[248,412],[230,395]]) {
+  for(const [x,y] of [[231.5,350],[374,348],[340,413],[248,412],[230,395]]) {
     assert.ok(points.some(p=>Math.hypot(p[0]-x,p[1]-y)<.001),`missing original contour point ${x},${y}`);
   }
   assert.ok(points.length>20, 'curved perimeter must retain sampled quadratic curves');
@@ -67,7 +67,7 @@ test('housing keeps the curved taper with a small inset beneath the lid', () => 
 test('lid ink preserves the original variable-width SVG ribbon and mirrors in motion', () => {
   const closed=headlightFrame(0,-1).lidInk;
   assert.ok(closed?.length>80, 'original filled ribbon must be present');
-  for(const [x,y] of [[234,353],[235,394],[249,407],[340,407],[230,395]]) {
+  for(const [x,y] of [[235.5,353],[235,394],[249,407],[340,407],[230,395]]) {
     assert.ok(closed.some(p=>Math.hypot(p[0]-x,p[1]-y)<.001));
   }
   for(const t of [0,.25,.5,.75,1]) {

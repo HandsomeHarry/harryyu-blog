@@ -52,14 +52,19 @@ export function initHeadlights() {
       unit.lidInk.setAttribute('d', pathData(frame.lidInk));
       const visible = new Set(frame.faces.map(face => face.name));
       for (const [name, path] of unit.paths) path.style.display = visible.has(name) ? '' : 'none';
+      // Painter's algorithm. All fills are opaque; no fading of geometry.
+      const order: Element[] = [];
       for (const face of frame.faces) {
         const path = unit.paths.get(face.name)!;
         path.setAttribute('d', pathData(face.points));
-        // Painter's algorithm. All fills are opaque; no fading of geometry.
-        unit.faces.append(path);
-        if (face.name === 'lid') unit.faces.append(unit.lidInk);
-        if (face.name === 'bulb') unit.faces.append(unit.details);
+        order.push(path);
+        if (face.name === 'lid') order.push(unit.lidInk);
+        if (face.name === 'bulb') order.push(unit.details);
       }
+      // Moving a node cancels its running CSS transitions, so only reorder
+      // when the depth order actually changes; otherwise the theme fill snaps.
+      const placed = [...unit.faces.children].filter(child => order.includes(child));
+      if (placed.some((child, i) => child !== order[i])) unit.faces.append(...order);
       const bulb = frame.faces.find(face => face.name === 'bulb');
       unit.details.style.display = bulb ? '' : 'none';
       unit.clip.setAttribute('d', bulb ? pathData(bulb.points) : '');
