@@ -1,0 +1,23 @@
+---
+// One résumé line item: organisation and dates on a rule, role under it,
+// then the few points worth reading.
+import type { Entry } from "../data/resume";
+
+interface Props {
+  entry: Entry;
+}
+const { entry } = Astro.props;
+---
+
+<article class="entry">
+  <header class="entry-head">
+    <h3>{entry.href ? <a href={entry.href}>{entry.org}</a> : entry.org}</h3>
+    <p class="mono entry-dates">{entry.dates}</p>
+  </header>
+  <p class="entry-role">
+    {entry.role}{entry.place && <span class="entry-place"> · {entry.place}</span>}
+  </p>
+  <ul class="entry-points">
+    {entry.points.map((point) => <li>{point}</li>)}
+  </ul>
+</article>

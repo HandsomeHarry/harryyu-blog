@@ -52,15 +52,15 @@ const {
     </script>
   </head>
   <body
-    data-sections="work,making,play,garage,about"
+    data-sections="work,experience,leadership,garage,education"
     data-prev={prev}
     data-next={next}
   >
     <a class="skip" href="#main">Skip to content</a>
 
-    <!-- Print-noise filters (softlabor-style): static fractal displacement
-         over type; hover snaps to crisp via CSS filter swap. -->
-    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <!-- Print-noise filters (softlabor-style): static fractal displacement for
+         no-JS .noisy type; the island below builds one filter per text block. -->
+    <svg id="noise-defs" width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
       <filter id="noise-content" x="0%" y="0%" width="100%" height="100%">
         <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="1" result="noise" />
         <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="B" />
@@ -74,14 +74,14 @@ const {
     <header class="masthead">
       <nav class="wrap masthead-inner" aria-label="Site">
         <div class="masthead-brand">
-          <a class="wordmark noisy-h" href="/">Harry Yu</a>
+          <a class="wordmark" href="/">Harry Yu</a>
           <ul class="nav">
-            <li><a class="noisy" href="/#about">About</a></li>
-            <li><a class="noisy" href="/#work">Work</a></li>
-            <li><a class="noisy" href="/#making">Making</a></li>
-            <li><a class="noisy" href="/#play">Play</a></li>
-            <li><a class="noisy" href="/garage">Garage</a></li>
-            <li><a class="noisy" href="/Resume_HarryYu.pdf" download>Résumé</a></li>
+            <li><a href="/#about">About</a></li>
+            <li><a href="/#work">Projects</a></li>
+            <li><a href="/#experience">Experience</a></li>
+            <li><a href="/#leadership">Leadership</a></li>
+            <li><a href="/garage">Garage</a></li>
+            <li><a href="/Resume_HarryYu.pdf" download>Résumé</a></li>
           </ul>
         </div>
       </nav>
@@ -105,7 +105,7 @@ const {
         <p class="label">Controls</p>
         <table>
           <tbody>
-            <tr><td>1 – 5</td><td>Jump to Work, Making, Play, Garage, About</td></tr>
+            <tr><td>1 – 5</td><td>Jump to Projects, Experience, Leadership, Garage, Education</td></tr>
             <tr><td>J / K</td><td>Next / previous project</td></tr>
             <tr><td>H</td><td>Toggle headlights (dark mode)</td></tr>
             <tr><td>?</td><td>Open / close this overlay</td></tr>
@@ -168,44 +168,47 @@ const {
       syncHeadHeight();
       addEventListener("resize", syncHeadHeight, { passive: true });
 
-      // -- print noise, scaled to font size (softlabor reference) --
-      // Each .noisy / .noisy-h element gets its own SVG filter with
-      // displacement ≈ 0.9x font size (1.15x for headings), a random
-      // turbulence seed and a slow base-frequency drift (0.9 -> 0.95 over
-      // 300s). Hover resolves the type to crisp over 1500ms; leaving
-      // re-noises over 750ms. Same cubic-bezier feel as the reference.
+      // -- print noise (softlabor.biz reference) --
+      // softlabor warps type with feTurbulence -> feDisplacementMap. A card
+      // resolves as a whole only while it is hovered. Measured in Chrome via
+      // REA: displacement falls ~15 -> 1.3 in 600ms (a fast-start curve,
+      // tau ~250ms) and recovers in ~300ms on leave. On article pages,
+      // paragraphs also resolve 500ms after they scroll into view.
+      // Each text block in <main> gets its own filter; the masthead stays
+      // crisp;
+      // small screens, reduced motion and no-JS visitors get crisp type.
       const reducedMotion = matchMedia(
         "(prefers-reduced-motion: reduce)"
       ).matches;
       const smallScreen = matchMedia("(max-width: 760px)").matches;
-      const defsHost = document.querySelector(
-        "svg[aria-hidden='true']"
-      ) as SVGSVGElement | null;
+      const defsHost = document.getElementById("noise-defs");
 
       if (!reducedMotion && !smallScreen && defsHost) {
         const SVGNS = "http://www.w3.org/2000/svg";
-        const FOCUS_MS = 1500;
-        const DENOISE_MS = 750;
+        const SHARPEN_TAU = 250; // ~90% resolved after 600ms
+        const DENOISE_TAU = 100; // ~95% re-noised after 300ms
+        const READ_DELAY = 500; // article text resolves this long after entering view
         const DRIFT = 0.05; // base-frequency drift over 300s
-        // cubic-bezier(0.1, 0.8, 0.2, 1) — the reference spline
-        const BEZ = [0.1, 0.8, 0.2, 1];
-        function bezier(t: number, p: number[]): number {
-          const [x1, y1, x2, y2] = p;
-          const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx;
-          const cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
-          const fx = (u: number) => ((ax * u + bx) * u + cx) * u;
-          const dfx = (u: number) => (3 * ax * u + 2 * bx) * u + cx;
-          let u = t;
-          for (let i = 0; i < 6; i++) {
-            const x = fx(u) - t;
-            if (Math.abs(x) < 1e-5) break;
-            const d = dfx(u);
-            if (Math.abs(d) < 1e-6) break;
-            u -= x / d;
-          }
-          return ((ay * u + by) * u + cy) * u;
-        }
+        const TEXT = "h1, h2, h3, h4, p, li, dt, dd, th, td, figcaption, blockquote, pre";
+        const ARTICLE = ".project-body, .project-summary";
+        // hovering anywhere in one of these resolves all of its text at once
+        const CARD = ".spec-card, .entry, .awards li, .skills > div, .hero .lockup";
 
+        type NoiseRec = {
+          el: HTMLElement;
+          disp: SVGElement;
+          base: number;
+          cur: number;
+          hovered: boolean;
+          focused: boolean;
+          read: boolean;
+          timer: number;
+          filter: SVGFilterElement;
+        };
+        const recs: NoiseRec[] = [];
+        const byEl = new Map<Element, NoiseRec>();
+        const drifts: { turb: SVGElement; base: number }[] = [];
+        const born = performance.now();
         let uid = 0;
         const usedSeeds = new Set<number>();
         function nextSeed(): number {
@@ -215,87 +218,90 @@ const {
           return s;
         }
 
-        // one record per noisy element: filter parts + foveation state
-        type NoiseRec = {
-          el: HTMLElement;
-          disp: SVGElement;
-          base: number;
-          timer: number;
-          hovered: boolean;
-        };
-        const recs: NoiseRec[] = [];
-        const drifts: { turb: SVGElement; base: number }[] = [];
-        const born = performance.now();
-
-        // Steam-Frame foveation: the middle of the viewport renders nearly
-        // clear (15% residual), noise returns toward the edges.
-        function foveaTarget(rec: NoiseRec): number {
-          const vh = window.innerHeight;
-          const r = rec.el.getBoundingClientRect();
-          if (r.bottom < -vh || r.top > 2 * vh) return rec.base;
-          const center = r.top + r.height / 2;
-          const d = Math.max(0, Math.min(1, Math.abs(center - vh / 2) / (vh / 2)));
-          return Math.round(rec.base * (0.15 + 0.85 * Math.pow(d, 1.5)));
+        // The filter region is a percentage of the element's box. At 0%/100%
+        // displaced pixels are cut off at the box edge, which squares off
+        // tightly boxed type like the hero name. Pad it by the farthest a
+        // pixel can move (half the displacement scale) on every side.
+        function fitRegion(rec: NoiseRec) {
+          const { width, height } = rec.el.getBoundingClientRect();
+          if (!width || !height) return;
+          const pad = rec.base / 2 + 2;
+          const px = (pad / width) * 100, py = (pad / height) * 100;
+          rec.filter.setAttribute("x", `${-px}%`);
+          rec.filter.setAttribute("y", `${-py}%`);
+          rec.filter.setAttribute("width", `${100 + 2 * px}%`);
+          rec.filter.setAttribute("height", `${100 + 2 * py}%`);
         }
-        function applyFovea() {
+
+        let raf = 0;
+        let last = 0;
+        function frame(now: number) {
+          const dt = Math.min(64, now - last);
+          last = now;
+          let settling = false;
           for (const rec of recs) {
-            if (rec.hovered) continue;
-            const target = foveaTarget(rec);
-            const cur = Number(rec.disp.getAttribute("scale"));
-            if (Math.abs(cur - target) >= 2) {
-              clearTimeout(rec.timer);
-              rec.disp.setAttribute("scale", String(target));
-            }
+            const target = rec.hovered || rec.focused || rec.read ? 0 : rec.base;
+            if (rec.cur === target) continue;
+            const tau = target < rec.cur ? SHARPEN_TAU : DENOISE_TAU;
+            let next = rec.cur + (target - rec.cur) * (1 - Math.exp(-dt / tau));
+            if (Math.abs(target - next) < 0.05) next = target;
+            else settling = true;
+            rec.cur = next;
+            rec.disp.setAttribute("scale", next.toFixed(2));
           }
+          raf = settling ? requestAnimationFrame(frame) : 0;
+        }
+        function wake() {
+          if (raf) return;
+          last = performance.now();
+          raf = requestAnimationFrame(frame);
         }
 
         function wireNoise() {
-          // everything typographic: headings, labels, and all prose
-          const els = Array.from(
-            document.querySelectorAll<HTMLElement>(
-              [
-                ".noisy",
-                ".noisy-h",
-                ".spec-card .summary",
-                ".spec-card .parts",
-                ".project-body > p",
-                ".project-body > ul",
-                ".project-body > ol",
-                ".changelog-item .summary",
-                ".about-cols p",
-                ".hero .statement",
-                ".footer .statement",
-              ].join(", ")
-            )
-          );
-          const seen = new Set<HTMLElement>();
-          for (const el of els) {
-            if (seen.has(el)) continue;
-            seen.add(el);
+          // every text block in <main>; the outermost match carries the
+          // filter so nested blocks are not warped twice
+          const chosen = new Set<Element>();
+          const reader = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+              const rec = byEl.get(entry.target)!;
+              clearTimeout(rec.timer);
+              if (entry.isIntersecting) {
+                rec.timer = window.setTimeout(() => {
+                  rec.read = true;
+                  wake();
+                }, READ_DELAY);
+              } else {
+                rec.read = false;
+                wake();
+              }
+            }
+          });
+          for (const el of document.querySelectorAll<HTMLElement>(
+            TEXT.split(", ").map((t) => `main ${t}`).join(", ")
+          )) {
+            if (!el.textContent?.trim()) continue;
+            let up = el.parentElement;
+            while (up && !chosen.has(up)) up = up.parentElement;
+            if (up) continue;
+            chosen.add(el);
+
             const fs = parseFloat(getComputedStyle(el).fontSize);
             if (!fs) continue;
-            const heading = el.classList.contains("noisy-h");
-            const prose =
-              !heading &&
-              (el.tagName === "P" || el.tagName === "UL" || el.tagName === "OL" ||
-                el.classList.contains("summary") ||
-                el.classList.contains("statement"));
-            const factor = heading ? 1.15 : prose ? 0.7 : 0.9;
-            const scale = Math.max(4, Math.round(fs * factor));
+            // Text under 48px matches softlabor's clarity: 15px on their 24px
+            // body, never more than 15px, so card titles read like theirs.
+            // Display type (hero name, page titles) keeps the heavier 0.9x.
+            const scale = fs >= 48
+              ? Math.round(fs * 0.9)
+              : Math.max(4, Math.min(15, Math.round(fs * 15 / 24)));
             const base = 0.88 + Math.random() * 0.04; // per-element jitter
-            const seed = nextSeed();
 
             const filter = document.createElementNS(SVGNS, "filter");
             filter.id = `noise-el-${uid++}`;
-            filter.setAttribute("x", "0%");
-            filter.setAttribute("y", "0%");
-            filter.setAttribute("width", "100%");
-            filter.setAttribute("height", "100%");
             const turb = document.createElementNS(SVGNS, "feTurbulence");
             turb.setAttribute("type", "fractalNoise");
             turb.setAttribute("baseFrequency", String(base));
             turb.setAttribute("numOctaves", "1");
-            turb.setAttribute("seed", String(seed));
+            turb.setAttribute("seed", String(nextSeed()));
             turb.setAttribute("result", "noise");
             const disp = document.createElementNS(SVGNS, "feDisplacementMap");
             disp.setAttribute("in", "SourceGraphic");
@@ -304,58 +310,39 @@ const {
             disp.setAttribute("xChannelSelector", "R");
             disp.setAttribute("yChannelSelector", "B");
             filter.append(turb, disp);
-            defsHost.append(filter);
+            defsHost!.append(filter);
             drifts.push({ turb, base });
-
             el.style.filter = `url(#${filter.id})`;
 
-            const rec: NoiseRec = { el, disp, base: scale, timer: 0, hovered: false };
+            const rec: NoiseRec = {
+              el, disp, base: scale, cur: scale,
+              hovered: false, focused: false, read: false, timer: 0, filter,
+            };
+            fitRegion(rec);
             recs.push(rec);
-
-            // tween displacement scale: crisp on enter, fovea-aware on leave
-            const tween = (to: number, dur: number) => {
-              clearTimeout(rec.timer);
-              const from = Number(disp.getAttribute("scale"));
-              const t0 = performance.now();
-              const step = () => {
-                const p = Math.min(1, (performance.now() - t0) / dur);
-                const e = bezier(p, BEZ);
-                disp.setAttribute("scale", String(from + (to - from) * e));
-                if (p < 1) rec.timer = window.setTimeout(step, 16);
-              };
-              step();
-            };
-            const toCrisp = () => {
-              rec.hovered = true;
-              tween(0, FOCUS_MS);
-            };
-            const toNoise = () => {
-              rec.hovered = false;
-              tween(foveaTarget(rec), DENOISE_MS);
-            };
-            el.addEventListener("mouseenter", toCrisp);
-            el.addEventListener("mouseleave", toNoise);
-            el.addEventListener("focus", toCrisp);
-            el.addEventListener("blur", toNoise);
+            byEl.set(el, rec);
+            const hoverRoot = el.closest<HTMLElement>(CARD) ?? el;
+            hoverRoot.addEventListener("mouseenter", () => { rec.hovered = true; wake(); });
+            hoverRoot.addEventListener("mouseleave", () => { rec.hovered = false; wake(); });
+            if (el.closest(ARTICLE)) reader.observe(el);
           }
 
-          applyFovea(); // initial pass: whatever sits mid-viewport starts clear
-          addEventListener("scroll", applyFovea, { passive: true });
-          addEventListener("resize", applyFovea, { passive: true });
+          const syncFocus = () => {
+            const active = document.activeElement;
+            for (const rec of recs) rec.focused = !!active && rec.el.contains(active);
+            wake();
+          };
+          addEventListener("resize", () => recs.forEach(fitRegion), { passive: true });
+          document.addEventListener("focusin", syncFocus);
+          document.addEventListener("focusout", () => setTimeout(syncFocus));
 
           // slow drift: baseFrequency 0.9 -> 0.95 over 300s, never loops
-          window.setInterval(
-            () => {
-              const f = Math.min(1, (performance.now() - born) / 300000);
-              for (const d of drifts) {
-                d.turb.setAttribute(
-                  "baseFrequency",
-                  (d.base + DRIFT * f).toFixed(4)
-                );
-              }
-            },
-            4000
-          );
+          window.setInterval(() => {
+            const f = Math.min(1, (performance.now() - born) / 300000);
+            for (const d of drifts) {
+              d.turb.setAttribute("baseFrequency", (d.base + DRIFT * f).toFixed(4));
+            }
+          }, 4000);
         }
 
         if (document.fonts?.ready) {
