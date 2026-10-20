@@ -1,5 +1,6 @@
 ---
 import { headlightFrame, pathData } from "../lib/headlight-geometry.mjs";
+import { effects } from "../config";
 // The body keeps the original contour drawing. Headlights are rigid meshes
 // in a separate, unmasked SVG so opaque faces really occlude one another.
 const sides = [-1, 1];
@@ -123,6 +124,10 @@ const sides = [-1, 1];
 
   </div>
 </div>
+
+<!-- rain on the window between you and the car (src/lib/rain.ts);
+     switched by effects.rain in src/config.ts -->
+{effects.rain && <canvas class="rain-glass" aria-hidden="true"></canvas>}
 
 <!-- click targets and lamp aura live in their own fixed layer above the
      content, outside the masked drawing, so nothing dims the glow -->

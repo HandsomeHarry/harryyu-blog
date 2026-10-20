@@ -120,6 +120,7 @@ const {
 
     <script>
       import { initHeadlights } from "../lib/headlights";
+      import { initRain } from "../lib/rain";
       // ---- site island: hotkeys, help overlay, scroll reveal, konami ----
       // Vanilla, no dependencies. Everything here degrades gracefully;
       // the site is fully usable if this never runs.
@@ -354,6 +355,8 @@ const {
 
       // Rigid headlight meshes, illumination, theme persistence and motion.
       const { currentTheme, setTheme } = initHeadlights();
+      const rain = document.querySelector<HTMLCanvasElement>(".rain-glass");
+      if (rain) initRain(rain);
 
       // -- help overlay --
       const help = document.getElementById("help")!;

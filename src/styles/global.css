@@ -507,6 +507,21 @@ html.js .slab.in {
   overflow: hidden;
 }
 
+/* a light ground fog: paper-coloured haze that thickens toward the road
+   and drifts in a few loose banks, softening the drawing's contrast */
+.bg-car::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 18% at 22% 78%, color-mix(in srgb, var(--paper) 30%, transparent), transparent 70%),
+    radial-gradient(55% 16% at 78% 70%, color-mix(in srgb, var(--paper) 26%, transparent), transparent 70%),
+    radial-gradient(70% 20% at 50% 92%, color-mix(in srgb, var(--paper) 34%, transparent), transparent 70%),
+    linear-gradient(to top, color-mix(in srgb, var(--paper) 22%, transparent), transparent 55%);
+}
+
 /* sits centred in the band between the header rule and the page bottom,
    then nudged down by 14% of its own height */
 .car-frame {
@@ -516,6 +531,8 @@ html.js .slab.in {
   transform: translate(-50%, -36%);
   width: max(960px, 136vw);
   perspective: 1200px;
+  /* out of focus behind the wet window (see .rain-glass) */
+  filter: blur(1.2px);
 }
 
 .car-frame > .car-svg {
@@ -601,6 +618,16 @@ main,
 .lamp-ring { fill: none; stroke: #fff1c4; stroke-opacity: .48; stroke-width: .8; }
 .lamp-flutes { fill: none; stroke: #684e2d; stroke-opacity: .24; stroke-width: .9; }
 .lamp-highlight { fill: none; stroke: #fffdf2; stroke-opacity: .78; stroke-width: 1.7; stroke-linecap: round; }
+
+/* rain beads on the glass: above the car and its fog, below the copy */
+.rain-glass {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
 
 /* aura layer: above the drawing, below the copy — the glow lights the
    page without washing over the type */
