@@ -355,8 +355,8 @@ const {
 
       // Rigid headlight meshes, illumination, theme persistence and motion.
       const { currentTheme, setTheme } = initHeadlights();
-      const rain = document.querySelector<HTMLCanvasElement>(".rain-glass");
-      if (rain) initRain(rain);
+      const rainCanvas = document.querySelector<HTMLCanvasElement>(".glass-layer");
+      const rain = rainCanvas ? initRain(rainCanvas, rainCanvas.hasAttribute("data-on")) : null;
 
       // -- help overlay --
       const help = document.getElementById("help")!;
@@ -389,6 +389,10 @@ const {
         }
         if (e.key === "h" || e.key === "H") {
           setTheme(currentTheme() === "night" ? "day" : "night");
+          return;
+        }
+        if (e.key === "r" || e.key === "R") {
+          rain?.toggle();
           return;
         }
         if (/^[1-5]$/.test(e.key)) {

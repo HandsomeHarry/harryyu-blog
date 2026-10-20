@@ -531,7 +531,7 @@ html.js .slab.in {
   transform: translate(-50%, -36%);
   width: max(960px, 136vw);
   perspective: 1200px;
-  /* out of focus behind the wet window (see .rain-glass) */
+  /* out of focus behind the wet window (see .glass-layer) */
   filter: blur(1.2px);
 }
 
@@ -620,13 +620,19 @@ main,
 .lamp-highlight { fill: none; stroke: #fffdf2; stroke-opacity: .78; stroke-width: 1.7; stroke-linecap: round; }
 
 /* rain beads on the glass: above the car and its fog, below the copy */
-.rain-glass {
+.glass-layer {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
   z-index: 0;
   pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms var(--ease);
+}
+
+.glass-layer.is-on {
+  opacity: 1;
 }
 
 /* aura layer: above the drawing, below the copy — the glow lights the

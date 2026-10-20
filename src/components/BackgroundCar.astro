@@ -125,9 +125,7 @@ const sides = [-1, 1];
   </div>
 </div>
 
-<!-- rain on the window between you and the car (src/lib/rain.ts);
-     switched by effects.rain in src/config.ts -->
-{effects.rain && <canvas class="rain-glass" aria-hidden="true"></canvas>}
+<canvas class="glass-layer" aria-hidden="true" data-on={effects.rain ? "" : undefined}></canvas>
 
 <!-- click targets and lamp aura live in their own fixed layer above the
      content, outside the masked drawing, so nothing dims the glow -->

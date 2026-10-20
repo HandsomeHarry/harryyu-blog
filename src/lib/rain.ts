@@ -15,10 +15,14 @@ type Drop = {
 const SLIDE_RADIUS = 4; // beads this large overcome surface tension
 const GRAVITY = 260; // px/s² once sliding
 const MAX_SPEED = 420;
+const FADE_MS = 300; // matches the .glass-layer opacity transition
 
-export function initRain(canvas: HTMLCanvasElement) {
+export function initRain(canvas: HTMLCanvasElement, initiallyOn = false) {
   const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx) return { toggle() {} };
+  let on = initiallyOn;
+  let fadeTimer = 0;
+  canvas.classList.toggle('is-on', on);
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
   let drops: Drop[] = [];
   let width = 0, height = 0, dpr = 1;
@@ -133,6 +137,10 @@ export function initRain(canvas: HTMLCanvasElement) {
 
   function start() {
     cancelAnimationFrame(raf);
+    if (!on) {
+      ctx!.clearRect(0, 0, width, height);
+      return;
+    }
     readColors();
     if (reduceMotion.matches) {
       // a still, wet window: draw the beads once and stop
@@ -148,6 +156,27 @@ export function initRain(canvas: HTMLCanvasElement) {
   start();
   addEventListener('resize', () => { resize(); start(); }, { passive: true });
   reduceMotion.addEventListener('change', start);
-  new MutationObserver(() => { readColors(); if (reduceMotion.matches) start(); })
+  new MutationObserver(() => { readColors(); if (on && reduceMotion.matches) start(); })
     .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  return {
+    // a fresh shower each time it starts; it keeps falling while it fades
+    // out, then stops and clears
+    toggle() {
+      const want = !canvas.classList.contains('is-on');
+      clearTimeout(fadeTimer);
+      canvas.classList.toggle('is-on', want);
+      if (want) {
+        if (on) return; // pressed again mid fade-out: just fade back in
+        on = true;
+        resize();
+        start();
+      } else {
+        fadeTimer = window.setTimeout(() => {
+          on = false;
+          start();
+        }, FADE_MS);
+      }
+    },
+  };
 }
